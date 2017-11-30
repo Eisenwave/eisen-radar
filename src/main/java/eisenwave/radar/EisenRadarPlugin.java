@@ -27,7 +27,7 @@ import java.time.Instant;
 
 public class EisenRadarPlugin extends JavaPlugin implements Listener {
     
-    public final static Instant TIMESTAMP = Instant.ofEpochMilli(1510442331623L);
+    public final static Instant TIMESTAMP = Instant.ofEpochMilli(1512043425194L);
     
     private URL wordURL;
     private WordOfEisenwave wordOfEisenwave;
