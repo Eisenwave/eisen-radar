@@ -1,0 +1,36 @@
+# the amount of ticks to wait between each radar bar update
+# at least 1, values below will be clamped
+# TIP: the lower the period, the smoother the radar bar will feel to players
+# TIP: if you are experiencing performance issues, increasing the period can reduce lag
+period: 1
+
+# radar options
+radar:
+
+  # the field of view
+  # between 0 and 360, values outside this range will be clamped
+  fov: 90
+
+  # the amount of characters that the radar content will take up
+  # at least 0, values below will be clamped
+  # TIP: use an uneven number so that radar dots can be positioned directly in the center of the bar
+  size: 31
+
+# boss bar options
+bossbar:
+
+  # the color of the boss bar
+  # pick one from: BLUE | GREEN | PINK | PURPLE | RED | WHITE | YELLOW
+  color: BLUE
+
+  # the style of the boss bar
+  # pick one from: SEGMENTED_6 | SEGMENTED_10 | SEGMENTED_12 | SEGMENTED_20 | SOLID
+  style: SEGMENTED_6
+
+  # list of boss bar flags (may be empty)
+  # pick multiple from: CREATE_FOG | DARKEN_SKY | PLAY_BOSS_MUSIC
+  flags: []
+
+  # bar percentage
+  # between 0 and 100, values outside this range will be clamped
+  progress: 0

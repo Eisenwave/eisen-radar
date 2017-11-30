@@ -1,0 +1,16 @@
+{
+    "args": {
+        "": "option:(show|hide)",
+        "show": [],
+        "hide": [],
+        "add": ["id", "x:int", "z:int", "type:org.bukkit.boss.BossBarType^", "color:(red|green|blue)~?", "display_name?"],
+        "remove": {
+            "": ["id"],
+            "all": []
+        }
+    },
+    "opts": {
+        "a_flag": [],
+        "a_option_with_args": ["my_opt:int"]
+    }
+}

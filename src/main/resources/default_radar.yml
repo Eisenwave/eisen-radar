@@ -1,0 +1,14 @@
+dots:
+  south:
+    yaw: 0
+    symbol: "&9S"
+  west:
+    yaw: 90
+    symbol: "W"
+  north:
+    yaw: 180
+    symbol: "&cN"
+  east:
+    yaw: 270
+    symbol: "E"
+  origin: "&lx"

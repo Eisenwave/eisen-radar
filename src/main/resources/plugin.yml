@@ -1,0 +1,56 @@
+name: EisenRadar
+version: 0.1
+main: eisenwave.radar.EisenRadarPlugin
+
+# All permissions start with "eisenradar" and belong into 4 distinct categories:
+# "view":
+#     Permissions related to viewing content on the server.
+#     All "view" permissions are guaranteed to NOT make any changes to the server and are generally intended to be
+#     available to everyone. Some "view" permissions can change the way that a player view content, such as display
+#     settings.
+#
+# "get":
+#     Permissions related to getting information from the plugin, such as lists of radar dots, player radars etc.
+#     All "get" permissions are guaranteed to NOT make any changes to the server, however they can reveal information
+#     which should not be visible to a regular player.
+#
+# "set":
+#     Permissions related to changing data on the server.
+#     "Set" permissions should not be given to players by default and are intended for use by moderators and admins.
+#
+# "command":
+#     Permissions for running commands.
+#
+permissions:
+  eisenradar.view.on:
+    default: true
+    description: "Enable viewing the radar"
+  eisenradar.view.off:
+    default: true
+    description: "Disable viewing the radar"
+  eisenradar.view.toggle:
+    default: true
+    description: "Toggle viewing/not viewing the radar"
+
+  eisenradar.get.list:
+    default: op
+    description: "Get a list of radars"
+
+  eisenradar.set.add:
+    default: op
+    description: "Add a radar dot"
+  eisenradar.set.remove:
+    default: op
+    description: "Remove a radar dot"
+  eisenradar.set.edit:
+    default: op
+    description: "Edit a radar dot"
+
+  eisenradar.command.radar:
+    default: true
+    description: "/radar"
+
+commands:
+  radar:
+    permission: "eisenradar.command.radar"
+    usage: "/radar"

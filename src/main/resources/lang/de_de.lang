@@ -1,0 +1,12 @@
+language.name = Deutsch
+language.region = Deutschland
+
+format.msg = &9[EisenRadar]&r %s
+format.err = &c[EisenRadar]&r %s
+format.use = &cNutzung: %s
+
+command.radar.on = Radar wurde eingeschaltet.
+command.radar.off = Radar wurde ausgeschaltet.
+
+error.not_a_player = Nur Spieler können diesen Befehl benutzen.
+error.permission = Dir fehlt die Berechtigung &c%s&r um dies zu tun!
