@@ -7,6 +7,7 @@ import eisenwave.radar.io.*;
 import eisenwave.radar.lang.Localizer;
 import eisenwave.radar.lang.PluginLanguage;
 import eisenwave.radar.model.RadarMap;
+import eisenwave.radar.model.WordOfEisenwave;
 import eisenwave.radar.persist.RadarMapDeserializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

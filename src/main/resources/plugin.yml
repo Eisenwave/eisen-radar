@@ -1,5 +1,5 @@
 name: EisenRadar
-version: 0.1
+version: 1.0
 main: eisenwave.radar.EisenRadarPlugin
 
 # All permissions start with "eisenradar" and belong into 4 distinct categories:

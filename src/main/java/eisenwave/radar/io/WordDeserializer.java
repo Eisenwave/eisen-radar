@@ -1,7 +1,7 @@
 package eisenwave.radar.io;
 
 import eisenwave.commons.io.TextDeserializer;
-import eisenwave.radar.WordOfEisenwave;
+import eisenwave.radar.model.WordOfEisenwave;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONObject;

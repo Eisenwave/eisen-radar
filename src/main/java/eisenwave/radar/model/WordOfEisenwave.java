@@ -1,8 +1,9 @@
-package eisenwave.radar;
+package eisenwave.radar.model;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class WordOfEisenwave {
@@ -21,6 +22,7 @@ public class WordOfEisenwave {
      *
      * @return the version message
      */
+    @Nullable
     public String getVersionMessage() {
         return versionMessage;
     }
@@ -30,8 +32,9 @@ public class WordOfEisenwave {
      *
      * @return a list of messages to print
      */
+    @NotNull
     public List<String> getMessages() {
-        return messages;
+        return Collections.unmodifiableList(messages);
     }
     
 }
