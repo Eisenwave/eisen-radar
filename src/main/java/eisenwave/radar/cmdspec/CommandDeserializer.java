@@ -28,8 +28,6 @@ public class CommandDeserializer implements TextDeserializer<ParsedCommand> {
             throw new IOException(ex);
         }
         
-        
-    
         return result;
     }
     
