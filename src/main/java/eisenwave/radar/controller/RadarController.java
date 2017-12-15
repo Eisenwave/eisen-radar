@@ -229,7 +229,7 @@ public class RadarController implements Listener {
     
     @NotNull
     private RadarBarStyle getRadarStyle(Player player) {
-        PluginLanguage lang = plugin.getLocalizer().getLanguage(player);
+        PluginLanguage lang = plugin.getLocalizer().getLanguage(player.getLocale());
         RadarSymbol symbol = new RadarSymbol(lang.get("radar.background"));
         String prefix = lang.get("radar.prefix");
         String suffix = lang.get("radar.suffix");

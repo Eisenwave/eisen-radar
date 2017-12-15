@@ -3,10 +3,29 @@ language.region = Deutschland
 
 format.msg = &9[EisenRadar]&r %s
 format.err = &c[EisenRadar]&r %s
-format.use = &cNutzung: %s
+format.use = &cSyntax: %s
 
+command.radar.list = Liste aller Radarpunkte in deiner Welt:
 command.radar.on = Radar wurde eingeschaltet.
 command.radar.off = Radar wurde ausgeschaltet.
+command.radar.add.bad_id = Radarpunkt &6%s&r existiert schon.
+command.radar.add.success = Neuer Radarpunkt &6%s&r hinzugefügt.
+command.radar.edit.bad_id = Radarpunkt &6%s&r existiert nicht. Uhm ihn zu bearbeiten, nutze erst &6/radar add&r
+command.radar.edit.pos = Position von &6%s&r auf &6%s&r gesetzt.
+command.radar.edit.infrange.true = Unendliche Reichweite für &6%s&r aktiviert.
+command.radar.edit.infrange.false = Unendliche Reichweite für &6%s&r deaktiviert.
+command.radar.edit.symbol = Symbol von &6%s&r auf "%s" gesetzt.
+command.radar.remove.bad_id = Radarpunkt &6%s&r existiert nicht.
+command.radar.remove.success = Radarpunkt &6%s&r wurde entfernt.
+command.radar.settings.wprange.bad_range_negative = Wegpunktreichweite muss positiv ein.
+command.radar.settings.wprange.bad_range = %s ist keine gültige Reichweite.
+command.radar.settings.wprange.set = Wegpunktreichweite dieser Welt auf &6%s&r gesetzt.
+command.radar.settings.wprange.get = Wegpunktreichweite dieser Welt ist &6%s&r.
 
-error.not_a_player = Nur Spieler können diesen Befehl benutzen.
-error.permission = Dir fehlt die Berechtigung &c%s&r um dies zu tun!
+error.not_a_player = Nur Spieler können diesen Befehl ausführen.
+error.permission = Du brauchst die Berechtigung &c%s&r um dies zu tun!
+error.nan = '%s' ist keine gültige Zahl.
+
+radar.background = &8-
+radar.prefix = &7[
+radar.suffix = &7]

@@ -39,6 +39,9 @@ Adds a radar dot with a given symbol and yaw or location.
 [B][FONT=Arial]Example:[/FONT] [/B][FONT=Courier New]/radar add waypoint1 &cX 1 2[/FONT]
 Adds a dot named "waypoint1" with the symbol [COLOR=#ff0000]X[/COLOR] at x=1, z=2.
 
+[B][FONT=Courier New]/radar edit <id> infrange (true|false)[/FONT][/B]
+Sets whether an existing radar dot should bypass the waypoint range of the world. If so, it will always be displayed, no matter how far the player is. This setting is meaningless for fixed-yaw radar dots.
+
 [B][FONT=Courier New]/radar edit <id> symbol <symbol>[/FONT][/B]
 Edits the symbol of an existing radar dot with a given id in your world.
 
@@ -55,8 +58,11 @@ Turns your radar on.
 [B][FONT=Courier New]/radar off[/FONT][/B]
 Turns your radar off.
 
-[B]/radar remove <id>[/B]
+[B][FONT=Courier New]/radar remove <id>[/FONT][/B]
 Removes a dot with a given id.
+
+[B][FONT=Courier New]/radar settings wprange [infinite|<range>][/FONT][/B]
+Displays the current waypoint range or sets it, if a range is provided. The range can either be the literal "inf" or "infinite" or it can be a positive real number.
 
 [B][FONT=Courier New]/radar toggle[/FONT][/B]
 Toggles your radar on or off. If your radar is on, it will be disabled. If your radar is off, it will be enabled.
@@ -148,6 +154,8 @@ Add a radar dot
 Remove a radar dot
 [B][COLOR=#660000]eisenradar.set.edit[/COLOR][/B]
 Edit a radar dot
+[B][COLOR=rgb(102, 0, 0)]eisenradar.set.settings[/COLOR][/B]
+Edit world settings
 
 [COLOR=#336600]Green=Default[/COLOR]
 [COLOR=#660000]Red=Operator-Only[/COLOR]

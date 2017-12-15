@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * A class which stores plugin languages by their locale and assists in translating messages for players based on
@@ -56,7 +55,7 @@ public class Localizer {
      * @return the translation
      */
     public String translate(Player player, String key) {
-        return getLanguage(player).get(key);
+        return getLanguage(player.getLocale()).get(key);
     }
     
     /**
@@ -68,7 +67,7 @@ public class Localizer {
      * @return the translation
      */
     public String translate(Player player, String key, Object... args) {
-        return getLanguage(player).get(key, args);
+        return getLanguage(player.getLocale()).get(key, args);
     }
     
     // TRANSLATE WITH FORMAT
@@ -118,7 +117,7 @@ public class Localizer {
      * @return the translation
      */
     public String translateFormat(Player player, String fmtKey, String msgKey) {
-        PluginLanguage lang = getLanguage(player);
+        PluginLanguage lang = getLanguage(player.getLocale());
         return lang.get(fmtKey, lang.get(msgKey));
     }
     
@@ -135,7 +134,7 @@ public class Localizer {
      * @return the translation
      */
     public String translateFormat(Player player, String fmtKey, String msgKey, Object... args) {
-        PluginLanguage lang = getLanguage(player);
+        PluginLanguage lang = getLanguage(player.getLocale());
         return lang.get(fmtKey, lang.get(msgKey, args));
     }
     
@@ -221,43 +220,20 @@ public class Localizer {
         return locale == null? primary : languages.getOrDefault(locale.toLowerCase(), primary);
     }
     
-    // cache a pair of previous language and UUID
-    private PluginLanguage previousLanguage;
-    private UUID previousUUID; // use UUID instead of player reference so that the player object can be gc'd
-    
-    /**
-     * Returns the language of a player. If the player's locale is not mapped onto some known {@link PluginLanguage},
-     * the main primary language is being used.
-     *
-     * @param player the player
-     * @return the player's language or the primary language if none could be found
-     * @see Player#getLocale()
-     * @see #getPrimaryLanguage()
-     */
-    @NotNull
-    public PluginLanguage getLanguage(@NotNull Player player) {
-        if (previousUUID != null && player.getUniqueId().equals(previousUUID))
-            return previousLanguage;
-        
-        previousUUID = player.getUniqueId();
-        previousLanguage = getLanguage(player.getLocale());
-        return previousLanguage;
-    }
-    
     /**
      * Returns the language of a command sender. If the command sender is a {@link Player}, the language will depend
-     * on the {@link Player#getLocale() locale} of a player. Otherwise the
-     * {@link #getPrimaryLanguage() primary language} will be used.
+     * on the {@link Player#getLocale() locale} of a player.
+     * <p>
+     * Otherwise the {@link #getPrimaryLanguage() primary language} will be used.
      *
      * @param sender the sender
      * @return the player's language or the primary language if none could be found
      * @see Player#getLocale()
      * @see #getPrimaryLanguage()
-     * @see #getLanguage(Player)
      */
     @NotNull
     public PluginLanguage getLanguage(@NotNull CommandSender sender) {
-        return sender instanceof Player? getLanguage((Player) sender) : getPrimaryLanguage();
+        return sender instanceof Player? getLanguage(((Player) sender).getLocale()) : getPrimaryLanguage();
     }
     
     /**

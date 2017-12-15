@@ -24,7 +24,7 @@ command.radar.settings.wprange.get = Current waypoint range of this world is &6%
 
 error.not_a_player = Only players can execute this command.
 error.permission = You need the permission &c%s&r to perform this action!
-error.nan = %s is not a valid number.
+error.nan = '%s' is not a valid number.
 
 radar.background = &8-
 radar.prefix = &7[

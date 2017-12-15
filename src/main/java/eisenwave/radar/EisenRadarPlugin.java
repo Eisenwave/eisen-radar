@@ -27,7 +27,7 @@ import java.time.Instant;
 
 public class EisenRadarPlugin extends JavaPlugin implements Listener {
     
-    public final static Instant TIMESTAMP = Instant.ofEpochMilli(1512043425194L);
+    public final static Instant TIMESTAMP = Instant.ofEpochMilli(1513371716091L);
     
     private URL wordURL;
     private WordOfEisenwave wordOfEisenwave;
@@ -88,7 +88,7 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
             return false;
         }
         
-        String[] locales = {"en_us"};
+        String[] locales = {"en_us", "de_de"};
         
         for (String locale : locales) {
             String fileName = locale + ".lang";
