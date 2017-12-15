@@ -36,6 +36,9 @@ permissions:
     default: op
     description: "Get a list of radars"
 
+  eisenradar.set.settings:
+    default: op
+    description: "Modify world settings"
   eisenradar.set.add:
     default: op
     description: "Add a radar dot"
