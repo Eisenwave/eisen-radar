@@ -12,9 +12,15 @@ command.radar.add.bad_id = Radar dot &6%s&r already exists.
 command.radar.add.success = Added new radar dot &6%s&r.
 command.radar.edit.bad_id = Radar dot &6%s&r doesn't exist. To edit it, first use using &6/radar add&r
 command.radar.edit.pos = Set position of &6%s&r to &6%s&r.
+command.radar.edit.infrange.true = Enabled infinite range for &6%s&r.
+command.radar.edit.infrange.false = Disabled infinite range for &6%s&r.
 command.radar.edit.symbol = Set symbol of &6%s&r to "%s".
 command.radar.remove.bad_id = Radar dot &6%s&r doesn't exist.
 command.radar.remove.success = Radar dot &6%s&r has been removed.
+command.radar.settings.wprange.bad_range_negative = Waypoint range must be positive.
+command.radar.settings.wprange.bad_range = %s is not a valid waypoint range.
+command.radar.settings.wprange.set = Set the waypoint range of this world to &6%s&r.
+command.radar.settings.wprange.get = Current waypoint range of this world is &6%s&r.
 
 error.not_a_player = Only players can execute this command.
 error.permission = You need the permission &c%s&r to perform this action!

@@ -15,6 +15,14 @@ public class WorldRadarPos implements RadarPosition {
         return (float) Math.toDegrees( -Math.atan2(this.x - x, this.z - z) );
     }
     
+    @Override
+    public double squaredDistanceTo(double x, double z) {
+        double
+            dx = x - this.x,
+            dz = z - this.z;
+        return dx * dx + dz * dz;
+    }
+    
     public double getX() {
         return x;
     }

@@ -1,6 +1,6 @@
 package eisenwave.radar.persist;
 
-import eisenwave.radar.model.RadarDot;
+import eisenwave.radar.model.WayPoint;
 import eisenwave.radar.model.RadarMap;
 import eisenwave.radar.model.pos.FixedRadarPos;
 import eisenwave.radar.model.pos.RadarPosition;
@@ -17,21 +17,29 @@ public class RadarMapSerializer implements YamlSerializer<RadarMap> {
     
     @Override
     public void toYaml(RadarMap map, YamlConfiguration yaml) {
-        ConfigurationSection dotsSection = yaml.createSection("dots");
-        
-        for (Map.Entry<String, RadarDot> entry : map.entrySet()) {
-            RadarDot dot = entry.getValue();
+        writeSettings(yaml.createSection("settings"), map);
+        writeDots(yaml.createSection("dots"), map);
+    }
+    
+    private void writeSettings(ConfigurationSection section, RadarMap map) {
+        section.set("waypoint_range", map.getWayPointRange());
+    }
+    
+    private void writeDots(ConfigurationSection section, RadarMap map) {
+        for (Map.Entry<String, WayPoint> entry : map.entrySet()) {
+            WayPoint dot = entry.getValue();
             RadarPosition pos = dot.getPosition();
-            
-            ConfigurationSection dotSection = dotsSection.createSection(entry.getKey());
+        
+            ConfigurationSection dotSection = section.createSection(entry.getKey());
             dotSection.set("symbol", dot.getSymbol().toString().replace(COLOR_CHAR, "&"));
-            
+        
             if (pos instanceof FixedRadarPos) {
                 dotSection.set("yaw", ((FixedRadarPos) pos).getYaw());
             } else if (pos instanceof WorldRadarPos) {
                 WorldRadarPos worldPos = (WorldRadarPos) pos;
                 dotSection.set("x", worldPos.getX());
                 dotSection.set("z", worldPos.getZ());
+                dotSection.set("inf_range", dot.hasInfiniteRange());
             }
         }
     }

@@ -21,6 +21,16 @@ public class FixedRadarPos implements RadarPosition {
     }
     
     @Override
+    public double squaredDistanceTo(double x, double z) {
+        return Double.POSITIVE_INFINITY;
+    }
+    
+    @Override
+    public double distanceTo(double x, double z) {
+        return Double.POSITIVE_INFINITY;
+    }
+    
+    @Override
     public float yawRelTo(double x, double y, float yaw) {
         return this.yaw - yaw;
     }

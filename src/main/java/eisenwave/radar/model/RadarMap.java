@@ -5,18 +5,30 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class RadarMap extends HashMap<String, RadarDot> {
+public class RadarMap extends HashMap<String, WayPoint> {
+    
+    private double maxDotRange = 256;
     
     public RadarMap() {
         super();
     }
     
-    public RadarMap(@NotNull Map<String, ? extends RadarDot> c) {
+    public RadarMap(@NotNull Map<String, ? extends WayPoint> c) {
         super(c);
     }
     
-    public void add(String id, RadarPosition position, RadarSymbol symbol) {
-        this.put(id, new RadarDot(id, position, symbol));
+    public double getWayPointRange() {
+        return maxDotRange;
+    }
+    
+    public void setWayPointRange(double maxDotRange) {
+        this.maxDotRange = maxDotRange;
+    }
+    
+    public WayPoint add(String id, RadarPosition position, RadarSymbol symbol) {
+        WayPoint wayPoint = new WayPoint(id, position, symbol);
+        this.put(id, wayPoint);
+        return wayPoint;
     }
     
     // MISC

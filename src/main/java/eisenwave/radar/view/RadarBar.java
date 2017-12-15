@@ -1,6 +1,6 @@
 package eisenwave.radar.view;
 
-import eisenwave.radar.model.RadarDot;
+import eisenwave.radar.model.WayPoint;
 import eisenwave.radar.model.RadarSymbol;
 import org.bukkit.boss.BossBar;
 import org.jetbrains.annotations.Contract;
@@ -36,7 +36,7 @@ public class RadarBar {
     
     // ACTIONS
     
-    public void draw(float yaw, RadarDot dot) {
+    public void draw(float yaw, WayPoint dot) {
         float rel = ( normalize(yaw) / fov ) + 0.5F;
         if (rel >= 0 && rel <= 1) {
             int index = (int) (rel * (buffer.length - 1));

@@ -5,6 +5,7 @@ import eisenwave.radar.io.EisenRadarConfig;
 import eisenwave.radar.lang.PluginLanguage;
 import eisenwave.radar.model.RadarMap;
 import eisenwave.radar.model.RadarSymbol;
+import eisenwave.radar.model.pos.RadarPosition;
 import eisenwave.radar.persist.RadarMapDeserializer;
 import eisenwave.radar.persist.RadarMapSerializer;
 import eisenwave.radar.view.RadarBar;
@@ -237,8 +238,19 @@ public class RadarController implements Listener {
     }
     
     private void draw(RadarMap map, RadarBar bar, double x, double z, float yaw) {
+        double maxRange = map.getWayPointRange();
+        
         bar.clear();
-        map.forEach((id, dot) -> bar.draw(dot.getPosition().yawRelTo(x, z, yaw), dot));
+        map.forEach((id, dot) -> {
+            RadarPosition pos = dot.getPosition();
+            boolean draw = dot.hasInfiniteRange();
+            if (!draw) {
+                double distance = pos.distanceTo(x, z);
+                draw = Double.isInfinite(distance) || distance <= maxRange;
+            }
+            if (draw)
+                bar.draw(dot.getPosition().yawRelTo(x, z, yaw), dot);
+        });
         bar.update();
     }
     

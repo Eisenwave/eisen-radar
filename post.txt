@@ -1,0 +1,161 @@
+[IMG]https://i.imgur.com/dH7UPs2.png[/IMG]
+
+[IMG]https://i.imgur.com/aIlCjdF.png[/IMG]
+EisenRadar is a plugin which allows you to create configurable boss-bar radars for your worlds. You can do this easily through both commands and configuration files.
+
+[B][SIZE=5]Performance[/SIZE][/B]
+EisenRadar draws all radar bars asynchronously from the main thread. This means that you can have hundreds of players viewing a radar bar without your server's main functions being delayed.
+
+[B][SIZE=5]Stability[/SIZE][/B]
+EisenRadar saves all of its radars whenever the world saves. This means that you won't lose any of your custom waypoints if the server crashes.
+
+[B][SIZE=5]Localization[/SIZE][/B]
+When you add language files to your [B]plugins/EisenRadar/lang[/B] folder, players who are using the same languages will receive your custom messages.
+
+Example: If a German player (using language [B]de_de.lang[/B] in their resource pack) joins the server, messages from [B]lang/de_de.lang[/B] on your server will be sent to them.
+
+EisenRadar automatically detects the locale of players and chooses the right messages for them.
+
+[B][SIZE=5]Update Information[/SIZE][/B]
+The plugin automatically informs operators if a new version has been released after they join the server.
+
+
+[IMG]https://i.imgur.com/bRNaGhU.png[/IMG]
+
+[IMG]https://i.imgur.com/uJpLJQt.png[/IMG]
+In this screenshot you can see a very simple radar. The radar has dots at the cardinal directions (N,E,S,W) and a small [B]x[/B] marking the world's origin by default.
+
+[B]x[/B] and [B]W[/B] are visible because the player is looking into the west and the origin of the world is westwards of them. The colored dots [B][COLOR=#ff0000]P[/COLOR][/B] and [B][COLOR=#0080ff]Z[/COLOR][/B] are custom dots, added by the player.
+
+[IMG]https://i.imgur.com/RJkWnB2.png[/IMG]
+This screenshot shows example output of the [B]/radar list[/B] command.
+
+
+[IMG]https://i.imgur.com/3r9Jban.png[/IMG]
+EisenRadar uses only a single command to avoid clashes with other plugins. That command is [B][FONT=Courier New]/radar[/FONT][/B].
+
+[B][FONT=Courier New]/radar add <id> <symbol> (<yaw>|<x> <z>)[/FONT][/B]
+Adds a radar dot with a given symbol and yaw or location.
+[B][FONT=Arial]Example:[/FONT] [/B][FONT=Courier New]/radar add waypoint1 &cX 1 2[/FONT]
+Adds a dot named "waypoint1" with the symbol [COLOR=#ff0000]X[/COLOR] at x=1, z=2.
+
+[B][FONT=Courier New]/radar edit <id> symbol <symbol>[/FONT][/B]
+Edits the symbol of an existing radar dot with a given id in your world.
+
+[B][FONT=Courier New]/radar edit <id> pos (<yaw>|<x> <z>)[/FONT][/B]
+Edits the position of an existing radar dot with a given id in your world. If you provide one number for the position, it will be displayed at a fixed angle (yaw). If you provide two numbers, the dot will be displayed at a fixed location in the world.
+
+[B][FONT=Courier New]/radar list[/FONT][/B]
+Lists all radar dots in your world.
+For an example output, look into the screenshots section.
+
+[B][FONT=Courier New]/radar on[/FONT][/B]
+Turns your radar on.
+
+[B][FONT=Courier New]/radar off[/FONT][/B]
+Turns your radar off.
+
+[B]/radar remove <id>[/B]
+Removes a dot with a given id.
+
+[B][FONT=Courier New]/radar toggle[/FONT][/B]
+Toggles your radar on or off. If your radar is on, it will be disabled. If your radar is off, it will be enabled.
+
+
+[IMG]https://i.imgur.com/m33XIRQ.png[/IMG]
+This is the default plugin config.
+[CODE=yaml]
+# the amount of ticks to wait between each radar bar update
+# at least 1, values below will be clamped
+# TIP: the lower the period, the smoother the radar bar will feel to players
+# TIP: if you are experiencing performance issues, increasing the period can reduce lag
+period: 1
+
+# radar options
+radar:
+
+  # the field of view
+  # between 0 and 360, values outside this range will be clamped
+  fov: 90
+
+  # the amount of characters that the radar content will take up
+  # at least 0, values below will be clamped
+  # TIP: use an uneven number so that radar dots can be positioned directly in the center of the bar
+  size: 31
+
+# boss bar options
+bossbar:
+
+  # the color of the boss bar
+  # pick one from: BLUE | GREEN | PINK | PURPLE | RED | WHITE | YELLOW
+  color: BLUE
+
+  # the style of the boss bar
+  # pick one from: SEGMENTED_6 | SEGMENTED_10 | SEGMENTED_12 | SEGMENTED_20 | SOLID
+  style: SEGMENTED_6
+
+  # list of boss bar flags (may be empty)
+  # pick multiple from: CREATE_FOG | DARKEN_SKY | PLAY_BOSS_MUSIC
+  flags: []
+
+  # bar percentage
+  # between 0 and 100, values outside this range will be clamped
+  progress: 0[/CODE]
+
+EisenRadar stores all its radar dots in [B]plugins/EisenRadar/radars/<world_name>.yml[/B]. Here is an example of such a file:
+[CODE=yaml]dots:
+  east:
+    symbol: E
+    yaw: 270.0
+  south:
+    symbol: '&9S'
+    yaw: 0.0
+  north:
+    symbol: '&cN'
+    yaw: 180.0
+  origin:
+    symbol: '&lx'
+    x: 0.0
+    z: 0.0
+  west:
+    symbol: W
+    yaw: 90.0
+  point:
+    symbol: '&c&lP'
+    x: 96.0
+    z: 64.0
+  point2:
+    symbol: '&9&lZ'
+    x: 96.0
+    z: 0.0[/CODE]
+It is possible to edit these files by hand and edit, remove and add radar dots that way, however [U]DO NOT[/U] do this when the server is running, else your files will be overwritten.
+
+
+[IMG]https://i.imgur.com/DjivXH5.png[/IMG]
+[B][COLOR=#336600]eisenradar.view.on[/COLOR][/B]
+Enable viewing the radar
+[B][COLOR=#336600]eisenradar.view.off[/COLOR][/B]
+Disable viewing the radar
+[B][COLOR=#336600]eisenradar.view.toggle[/COLOR][/B]
+Toggle viewing/not viewing the radar
+
+[B][COLOR=#660000]eisenradar.get.list[/COLOR][/B]
+Get a list of radars
+
+[B][COLOR=#660000]eisenradar.set.add[/COLOR][/B]
+Add a radar dot
+[B][COLOR=#660000]eisenradar.set.remove[/COLOR][/B]
+Remove a radar dot
+[B][COLOR=#660000]eisenradar.set.edit[/COLOR][/B]
+Edit a radar dot
+
+[COLOR=#336600]Green=Default[/COLOR]
+[COLOR=#660000]Red=Operator-Only[/COLOR]
+
+
+[IMG]https://i.imgur.com/vYCCCI8.png[/IMG]
+[B]If you find a bug, please post it in the resource discussion, not in the reviews.
+
+If you have a question, please post it in the resource discussion, not in the reviews.
+
+I try my best to answer all questions in a day or less. If you feel like you are not getting a response in time or if you have an urgent request, feel free to send me a PM.[/B]

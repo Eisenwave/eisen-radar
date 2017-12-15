@@ -3,11 +3,16 @@ package eisenwave.radar.lang;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * A class which stores plugin languages by their locale and assists in translating messages for players based on
+ * locale.
+ */
 public class Localizer {
     
     private final Map<String, PluginLanguage> languages = new HashMap<>();
@@ -20,39 +25,115 @@ public class Localizer {
     
     // TRANSLATE
     
+    /**
+     * Translates a message for a sender.
+     *
+     * @param sender the sender
+     * @param key the translation key
+     * @return the translation
+     */
     public String translate(CommandSender sender, String key) {
         return getLanguage(sender).get(key);
     }
     
+    /**
+     * Translates a message for a sender with given arguments.
+     *
+     * @param sender the sender
+     * @param key the translation key
+     * @param args the translation arguments
+     * @return the translation
+     */
     public String translate(CommandSender sender, String key, Object... args) {
         return getLanguage(sender).get(key, args);
     }
     
+    /**
+     * Translates a message for a player.
+     *
+     * @param player the sender
+     * @param key the translation key
+     * @return the translation
+     */
     public String translate(Player player, String key) {
         return getLanguage(player).get(key);
     }
     
+    /**
+     * Translates a message for a player with given arguments.
+     *
+     * @param player the sender
+     * @param key the translation key
+     * @param args the arguments
+     * @return the translation
+     */
     public String translate(Player player, String key, Object... args) {
         return getLanguage(player).get(key, args);
     }
     
     // TRANSLATE WITH FORMAT
     
+    /**
+     * Translates a message for a sender with a format.
+     * <p>
+     * This works by translating the message first and using the translation as an argument for the format. The format
+     * must be a format string with exactly one {@code %s} argument.
+     *
+     * @param sender the sender
+     * @param fmtKey the format translation key
+     * @param msgKey the message translation key
+     * @return the translation
+     */
     public String translateFormat(CommandSender sender, String fmtKey, String msgKey) {
         PluginLanguage lang = getLanguage(sender);
         return lang.get(fmtKey, lang.get(msgKey));
     }
     
+    /**
+     * Translates a message for a sender with a format and given arguments.
+     * <p>
+     * This works by translating the message first and using the translation as an argument for the format. The format
+     * must be a format string with exactly one {@code %s} argument.
+     *
+     * @param sender the sender
+     * @param fmtKey the format translation key
+     * @param msgKey the message translation key
+     * @param args the message translation arguments
+     * @return the translation
+     */
     public String translateFormat(CommandSender sender, String fmtKey, String msgKey, Object... args) {
         PluginLanguage lang = getLanguage(sender);
         return lang.get(fmtKey, lang.get(msgKey, args));
     }
     
+    /**
+     * Translates a message for a sender with a format.
+     * <p>
+     * This works by translating the message first and using the translation as an argument for the format. The format
+     * must be a format string with exactly one {@code %s} argument.
+     *
+     * @param player the player
+     * @param fmtKey the format translation key
+     * @param msgKey the message translation key
+     * @return the translation
+     */
     public String translateFormat(Player player, String fmtKey, String msgKey) {
         PluginLanguage lang = getLanguage(player);
         return lang.get(fmtKey, lang.get(msgKey));
     }
     
+    /**
+     * Translates a message for a sender with a format and given arguments.
+     * <p>
+     * This works by translating the message first and using the translation as an argument for the format. The format
+     * must be a format string with exactly one {@code %s} argument.
+     *
+     * @param player the player
+     * @param fmtKey the format translation key
+     * @param msgKey the message translation key
+     * @param args the message translation arguments
+     * @return the translation
+     */
     public String translateFormat(Player player, String fmtKey, String msgKey, Object... args) {
         PluginLanguage lang = getLanguage(player);
         return lang.get(fmtKey, lang.get(msgKey, args));
@@ -123,6 +204,7 @@ public class Localizer {
      *
      * @return the primary language
      */
+    @NotNull
     public PluginLanguage getPrimaryLanguage() {
         return main;
     }
@@ -134,8 +216,9 @@ public class Localizer {
      * @return the player's language or the primary language if none could be found
      */
     @NotNull
-    public PluginLanguage getLanguage(@NotNull String locale) {
-        return languages.getOrDefault(locale.toLowerCase(), main);
+    public PluginLanguage getLanguage(@Nullable String locale) {
+        PluginLanguage primary = getPrimaryLanguage();
+        return locale == null? primary : languages.getOrDefault(locale.toLowerCase(), primary);
     }
     
     // cache a pair of previous language and UUID
@@ -153,11 +236,12 @@ public class Localizer {
      */
     @NotNull
     public PluginLanguage getLanguage(@NotNull Player player) {
-        if (player.getUniqueId().equals(previousUUID))
+        if (previousUUID != null && player.getUniqueId().equals(previousUUID))
             return previousLanguage;
         
         previousUUID = player.getUniqueId();
-        return previousLanguage = getLanguage(player.getLocale());
+        previousLanguage = getLanguage(player.getLocale());
+        return previousLanguage;
     }
     
     /**
@@ -182,10 +266,16 @@ public class Localizer {
      * @param locale the locale
      * @return whether the localizer has the language
      */
-    public boolean hasLanguage(@NotNull String locale) {
-        return languages.containsKey(locale.toLowerCase());
+    public boolean hasLanguage(@Nullable String locale) {
+        return locale == null || languages.containsKey(locale.toLowerCase());
     }
     
+    /**
+     * Registers a language with a given locale.
+     *
+     * @param locale the locale
+     * @param language the language
+     */
     public void registerLanguage(@NotNull String locale, @NotNull PluginLanguage language) {
         this.languages.put(locale.toLowerCase(), language);
         language.setParent(getPrimaryLanguage());

@@ -1,23 +1,16 @@
 package eisenwave.radar.model;
 
-import com.sun.istack.internal.NotNull;
 import eisenwave.radar.model.pos.RadarPosition;
-import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
 
 public class RadarDot {
     
-    private String id;
     private RadarPosition pos;
     private RadarSymbol symbol;
     
-    public RadarDot(@NotNull String id, @NotNull RadarPosition pos, @NotNull RadarSymbol symbol) {
-        this.symbol = symbol;
+    public RadarDot(@NotNull RadarPosition pos, @NotNull RadarSymbol symbol) {
         this.pos = pos;
-        this.id = id;
-    }
-    
-    public String getId() {
-        return id;
+        this.symbol = symbol;
     }
     
     public RadarPosition getPosition() {
@@ -28,21 +21,12 @@ public class RadarDot {
         return symbol;
     }
     
-    public void setId(String id) {
-        this.id = id;
-    }
-    
     public void setPosition(RadarPosition pos) {
         this.pos = pos;
     }
     
     public void setSymbol(RadarSymbol symbol) {
         this.symbol = symbol;
-    }
-    
-    @Override
-    public String toString() {
-        return "{symbol: \"" + getSymbol() + ChatColor.RESET + "\", pos: " + getPosition() + "}";
     }
     
 }
