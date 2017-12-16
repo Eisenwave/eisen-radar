@@ -22,9 +22,15 @@ command.radar.settings.wprange.bad_range = %s ist keine gültige Reichweite.
 command.radar.settings.wprange.set = Wegpunktreichweite dieser Welt auf &6%s&r gesetzt.
 command.radar.settings.wprange.get = Wegpunktreichweite dieser Welt ist &6%s&r.
 
+command.eisenradar.info = EisenRadar-Informationen:
+command.eisenradar.reload = Plugin wurde neu geladen.
+command.eisenradar.save.all = Radare aller Welten wurden gespeichert.
+command.eisenradar.save.one = Radar der Welt &6%s&r wurde gespeichert.
+
 error.not_a_player = Nur Spieler können diesen Befehl ausführen.
 error.permission = Du brauchst die Berechtigung &c%s&r um dies zu tun!
 error.nan = '%s' ist keine gültige Zahl.
+error.world = Welt &c%s&r existiert nicht.
 
 radar.background = &8-
 radar.prefix = &7[

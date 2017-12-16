@@ -304,34 +304,6 @@ public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
     
     // UTIL
     
-    private boolean validatePermission(CommandSender sender, String permission) {
-        if (sender.hasPermission(permission)) return true;
-        else {
-            localizer.messageFormat(sender, "format.err", "error.permission", permission);
-            return false;
-        }
-    }
     
-    @Nullable
-    private Player validatePlayerSender(CommandSender sender) {
-        if (!(sender instanceof Player)) {
-            localizer.messageFormat(sender, "format.err", "error.not_a_player");
-            return null;
-        }
-        else return (Player) sender;
-    }
-    
-    @Nullable
-    private Player validatePlayerWithPermission(CommandSender sender, String permission) {
-        if (!sender.hasPermission(permission)) {
-            localizer.messageFormat(sender, "format.err", "error.permission", permission);
-            return null;
-        }
-        if (!(sender instanceof Player)) {
-            localizer.messageFormat(sender, "format.err", "error.not_a_player");
-            return null;
-        }
-        return (Player) sender;
-    }
     
 }

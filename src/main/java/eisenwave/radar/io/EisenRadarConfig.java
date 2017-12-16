@@ -16,6 +16,7 @@ import java.util.List;
 public class EisenRadarConfig {
     
     public final static int DEFAULT_PERIOD = 1;
+    public final static boolean DEFAULT_AUTOSAVE = true;
     
     public final static RadarType DEFAULT_RADAR_TYPE = RadarType.BOSS;
     public final static int DEFAULT_RADAR_SIZE = 25;
@@ -26,6 +27,7 @@ public class EisenRadarConfig {
     public final static BarColor DEFAULT_BAR_COLOR = BarColor.WHITE;
     
     private final int period;
+    private final boolean autosave;
     
     private final RadarType radarType;
     private final int radarSize;
@@ -38,6 +40,7 @@ public class EisenRadarConfig {
     
     public EisenRadarConfig(Configuration config) {
         this.period = PrimMath.clamp(0, config.getInt("period", DEFAULT_PERIOD), Integer.MAX_VALUE);
+        this.autosave = config.getBoolean("autosave", DEFAULT_AUTOSAVE);
         
         this.radarType = Enumerations.parse(config.getString("radar.type"), DEFAULT_RADAR_TYPE);
         this.radarSize = PrimMath.clamp(0, config.getInt("radar.size", DEFAULT_RADAR_SIZE), Integer.MAX_VALUE);
@@ -55,6 +58,10 @@ public class EisenRadarConfig {
     
     public int getPeriod() {
         return period;
+    }
+    
+    public boolean getAutoSave() {
+        return autosave;
     }
     
     @NotNull

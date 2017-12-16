@@ -30,7 +30,7 @@ import java.nio.file.Files;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.UUID;
 
 public class RadarController implements Listener {
     
@@ -38,7 +38,7 @@ public class RadarController implements Listener {
     
     private final EisenRadarPlugin plugin;
     private final Map<World, RadarMap> worldRadarMap = new HashMap<>();
-    private final Map<Player, RadarBar> playerRadarMap = new WeakHashMap<>();
+    private final Map<UUID, RadarBar> playerRadarMap = new HashMap<>();
     
     private EisenRadarConfig config;
     private BarStyle barStyle;
@@ -64,14 +64,15 @@ public class RadarController implements Listener {
      * @param enable whether the radar should be visible
      */
     public void setRadarVisible(@NotNull Player player, boolean enable) {
+        UUID uuid = player.getUniqueId();
         if (enable) {
-            if (playerRadarMap.containsKey(player))
-                playerRadarMap.get(player).setVisible(true);
+            if (playerRadarMap.containsKey(uuid))
+                playerRadarMap.get(uuid).setVisible(true);
             else
                 loadRadarBar(player);
         }
-        if (!enable) {
-            RadarBar bar = playerRadarMap.remove(player);
+        else {
+            RadarBar bar = playerRadarMap.remove(uuid);
             if (bar != null) bar.setVisible(false);
         }
     }
@@ -101,27 +102,20 @@ public class RadarController implements Listener {
      */
     @Nullable
     public RadarBar getRadarBar(Player player) {
-        return playerRadarMap.get(player);
+        return playerRadarMap.get(player.getUniqueId());
+    }
+    
+    public int getLoadedWorldCount() {
+        return worldRadarMap.size();
+    }
+    
+    public int getLoadedBarCount() {
+        return playerRadarMap.size();
     }
     
     // IO
     
-    private void loadRadarBar(@NotNull Player player) {
-        if (playerRadarMap.containsKey(player))
-            throw new IllegalStateException("player " + player.getName() + " already has a radar bar");
-        
-        BossBar bossBar = plugin.getServer().createBossBar("", barColor, barStyle, barFlags);
-        bossBar.setProgress(barProgress);
-        RadarBar radarBar = new RadarBar(bossBar, config.getRadarSize(), config.getRadarFOV(), getRadarStyle(player));
-        bossBar.addPlayer(player);
-        playerRadarMap.put(player, radarBar);
-        
-        Location loc = player.getLocation();
-        RadarMap map = getRadarMap(loc.getWorld());
-        draw(map, radarBar, loc.getX(), loc.getZ(), loc.getYaw());
-    }
-    
-    private void saveRadarMap(@NotNull World world) {
+    public void saveRadarMap(@NotNull World world) {
         RadarMap map = worldRadarMap.get(world);
         File file = fileOfRadarMap(world.getName());
         if (map != null) try {
@@ -132,7 +126,23 @@ public class RadarController implements Listener {
         }
     }
     
-    private RadarMap loadRadarMap(@NotNull World world) {
+    public void loadRadarBar(@NotNull Player player) {
+        if (playerRadarMap.containsKey(player.getUniqueId()))
+            throw new IllegalStateException("player " + player.getName() + " already has a radar bar");
+        
+        BossBar bossBar = plugin.getServer().createBossBar("", barColor, barStyle, barFlags);
+        bossBar.setProgress(barProgress);
+        RadarBar radarBar = new RadarBar(bossBar, config.getRadarSize(), config.getRadarFOV(), getRadarStyle(player));
+        bossBar.addPlayer(player);
+        playerRadarMap.put(player.getUniqueId(), radarBar);
+        //System.out.println("put "+player.getUniqueId()+", bar");
+        
+        Location loc = player.getLocation();
+        RadarMap map = getRadarMap(loc.getWorld());
+        draw(map, radarBar, loc.getX(), loc.getZ(), loc.getYaw());
+    }
+    
+    public RadarMap loadRadarMap(@NotNull World world) {
         RadarMap map;
         File file = fileOfRadarMap(world.getName());
         if (!file.exists()) {
@@ -155,6 +165,7 @@ public class RadarController implements Listener {
         }
         
         worldRadarMap.put(world, map);
+        //System.out.println("put "+world+", "+map);
         return map;
     }
     
@@ -178,6 +189,7 @@ public class RadarController implements Listener {
      */
     public void onDisable() {
         worldRadarMap.keySet().forEach(this::saveRadarMap);
+        worldRadarMap.clear();
         playerRadarMap.forEach((player, bar) -> bar.getBossBar().removeAll());
         playerRadarMap.clear();
     }
@@ -188,9 +200,9 @@ public class RadarController implements Listener {
     public void onAsyncTick() {
         Location loc = new Location(null, 0, 0, 0);
         
-        playerRadarMap.forEach((player, bar) -> {
+        playerRadarMap.forEach((uuid, bar) -> {
             if (bar.isVisible()) {
-                player.getLocation(loc);
+                Bukkit.getPlayer(uuid).getLocation(loc);
                 RadarMap map = getRadarMap(loc.getWorld());
                 draw(map, bar, loc.getX(), loc.getZ(), loc.getYaw());
             }
@@ -201,28 +213,40 @@ public class RadarController implements Listener {
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSpawn(PlayerSpawnLocationEvent event) {
+        //System.out.println("ON SPAWN");
         Player player = event.getPlayer();
         Bukkit.getScheduler().runTask(plugin, () -> {
-            if (!playerRadarMap.containsKey(player))
+            //System.out.println("SCHEDULER RUN");
+            if (!playerRadarMap.containsKey(player.getUniqueId()))
                 loadRadarBar(player);
         });
     }
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onQuit(PlayerQuitEvent event) {
-        playerRadarMap.remove(event.getPlayer());
+        Player player = event.getPlayer();
+        playerRadarMap.remove(player.getUniqueId());
+        
+        World world = player.getWorld();
+        if (world.getPlayers().size() == 1) {
+            worldRadarMap.remove(world);
+            if (plugin.getEisenRadarConfig().getAutoSave())
+                saveRadarMap(world);
+        }
     }
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldUnload(WorldUnloadEvent event) {
         World world = event.getWorld();
-        saveRadarMap(world);
         worldRadarMap.remove(world);
+        if (plugin.getEisenRadarConfig().getAutoSave())
+            saveRadarMap(world);
     }
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldSave(WorldSaveEvent event) {
-        saveRadarMap(event.getWorld());
+        if (plugin.getEisenRadarConfig().getAutoSave())
+            saveRadarMap(event.getWorld());
     }
     
     // UTIL
@@ -239,14 +263,15 @@ public class RadarController implements Listener {
     
     private void draw(RadarMap map, RadarBar bar, double x, double z, float yaw) {
         double maxRange = map.getWayPointRange();
+        final double maxRangeSquared = maxRange * maxRange;
         
         bar.clear();
         map.forEach((id, dot) -> {
             RadarPosition pos = dot.getPosition();
             boolean draw = dot.hasInfiniteRange();
             if (!draw) {
-                double distance = pos.distanceTo(x, z);
-                draw = Double.isInfinite(distance) || distance <= maxRange;
+                double distance = pos.squaredDistanceTo(x, z);
+                draw = Double.isInfinite(distance) || distance <= maxRangeSquared;
             }
             if (draw)
                 bar.draw(dot.getPosition().yawRelTo(x, z, yaw), dot);

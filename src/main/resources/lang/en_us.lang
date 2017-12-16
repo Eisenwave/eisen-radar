@@ -4,6 +4,7 @@ language.region = United States
 format.msg = &9[EisenRadar]&r %s
 format.err = &c[EisenRadar]&r %s
 format.use = &cUsage: %s
+format.key_val = &9%s: &r%s
 
 command.radar.list = List of all radar dots in your world:
 command.radar.on = Enabled the radar.
@@ -22,9 +23,15 @@ command.radar.settings.wprange.bad_range = %s is not a valid waypoint range.
 command.radar.settings.wprange.set = Set the waypoint range of this world to &6%s&r.
 command.radar.settings.wprange.get = Current waypoint range of this world is &6%s&r.
 
+command.eisenradar.info = EisenRadar information:
+command.eisenradar.reload = Reloaded the plugin.
+command.eisenradar.save.all = Saved all worlds.
+command.eisenradar.save.one = Saved radar of world &6%s&r.
+
 error.not_a_player = Only players can execute this command.
 error.permission = You need the permission &c%s&r to perform this action!
-error.nan = '%s' is not a valid number.
+error.nan = &c%s&r is not a valid number.
+error.world = World &c%s&r doesn't exist.
 
 radar.background = &8-
 radar.prefix = &7[

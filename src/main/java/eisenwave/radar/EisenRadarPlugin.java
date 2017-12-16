@@ -1,5 +1,6 @@
 package eisenwave.radar;
 
+import eisenwave.radar.cmd.CmdEisenRadar;
 import eisenwave.radar.cmd.CmdRadar;
 import eisenwave.radar.cmd.EisenRadarCommand;
 import eisenwave.radar.controller.RadarController;
@@ -36,6 +37,7 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
     private RadarController controller;
     private Localizer localizer;
     private BukkitTask controllerTask;
+    private boolean enabledOnce = false;
     
     @Override
     public void onLoad() {
@@ -54,11 +56,15 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
             setEnabled(false);
             return;
         }
-        
-        initWord();
+    
         initController();
-        initCommands();
-        initEvents();
+        
+        if (!enabledOnce) {
+            initWord();
+            initCommands();
+            initEvents();
+            this.enabledOnce = true;
+        }
     }
     
     private boolean initConfig() {
@@ -117,11 +123,12 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
     }
     
     private void initController() {
-        controller = new RadarController(this);
-        controller.onEnable();
-        
+        if (!enabledOnce)
+            controller = new RadarController(this);
+    
         BukkitScheduler scheduler = this.getServer().getScheduler();
         controllerTask = scheduler.runTaskTimerAsynchronously(this, controller::onAsyncTick, 0, config.getPeriod());
+        controller.onEnable();
     }
     
     private void initWord() {
@@ -137,7 +144,8 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
     
     private void initCommands() {
         EisenRadarCommand[] commands = {
-            new CmdRadar(this)
+            new CmdRadar(this),
+            new CmdEisenRadar(this)
         };
         
         for (EisenRadarCommand cmd : commands)
