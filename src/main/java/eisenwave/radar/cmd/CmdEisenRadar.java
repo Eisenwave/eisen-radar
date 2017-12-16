@@ -16,8 +16,7 @@ import java.util.List;
 public class CmdEisenRadar extends EisenRadarCommand implements TabCompleter {
     
     private final static String
-        USAGE = "/eisenradar (info|reload|save) ...",
-        USAGE_SAVE = "/eisenradar save [world]";
+        USAGE = "/eisenradar (info|reload|save) ...";
     
     public CmdEisenRadar(@NotNull EisenRadarPlugin plugin) {
         super(plugin);
@@ -82,7 +81,7 @@ public class CmdEisenRadar extends EisenRadarCommand implements TabCompleter {
     
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String label, String[] args) {
-        return args.length == 1? Arrays.asList("reload", "save") : null;
+        return args.length == 1? Arrays.asList("info", "reload", "save") : null;
     }
     
 }
