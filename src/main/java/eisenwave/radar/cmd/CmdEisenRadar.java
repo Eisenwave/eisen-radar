@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-public class CmdEisenRadar extends EisenRadarCommand implements TabCompleter {
+public class CmdEisenRadar extends EisenRadarCommand implements SimpleTabCompleter {
     
     private final static String
         USAGE = "/eisenradar (info|reload|save) ...";
@@ -80,8 +80,8 @@ public class CmdEisenRadar extends EisenRadarCommand implements TabCompleter {
     }
     
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String label, String[] args) {
-        return args.length == 1? Arrays.asList("info", "reload", "save") : null;
+    public List<String> getTabCompleteOptions(CommandSender sender) {
+        return Arrays.asList("info", "reload", "save");
     }
     
 }

@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class RadarSymbol {
     
-    private static final Pattern NOT_PRECEDED_BY_COLOR_CODE = Pattern.compile("(?<!"+ ChatColor.COLOR_CHAR+").");
+    //private static final Pattern NOT_PRECEDED_BY_COLOR_CODE = Pattern.compile("(?<!"+ ChatColor.COLOR_CHAR+").");
     
     private final String colors;
     private final char character;

@@ -17,10 +17,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
@@ -49,7 +46,8 @@ public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
     
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        command.setUsage(localizer.translate(sender, "format.use", USAGE));
+        String usage = "/radar (" + getTabCompleteOptions(sender).stream().collect(Collectors.joining("|")) + ")";
+        command.setUsage(localizer.translate(sender, "format.use", usage));
         
         if (args.length == 0) {
             return false;
@@ -59,7 +57,7 @@ public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
             case "settings": {
                 Player player = validatePlayerWithPermission(sender, "eisenradar.set.settings");
                 if (player == null) return true;
-    
+                
                 command.setUsage(localizer.translate(player, "format.use", USAGE_SETTINGS));
                 if (args.length < 2) return false;
                 
@@ -241,8 +239,17 @@ public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
     // TAB COMPLETE
     
     @Override
-    public List<String> getTabCompleteOptions() {
-        return Arrays.asList("add", "edit", "list", "off", "on", "remove", "settings", "toggle");
+    public List<String> getTabCompleteOptions(CommandSender sender) {
+        List<String> result = new ArrayList<>(8);
+        if (sender.hasPermission("eisenradar.set.add")) result.add("add");
+        if (sender.hasPermission("eisenradar.set.edit")) result.add("edit");
+        if (sender.hasPermission("eisenradar.get.list")) result.add("list");
+        if (sender.hasPermission("eisenradar.view.off")) result.add("off");
+        if (sender.hasPermission("eisenradar.view.on")) result.add("on");
+        if (sender.hasPermission("eisenradar.set.remove")) result.add("remove");
+        if (sender.hasPermission("eisenradar.set.settings")) result.add("settings");
+        if (sender.hasPermission("eisenradar.view.toggle")) result.add("toggle");
+        return result;
     }
     
     // STRING
@@ -303,7 +310,5 @@ public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
     }
     
     // UTIL
-    
-    
     
 }
