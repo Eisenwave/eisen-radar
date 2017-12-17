@@ -48,11 +48,35 @@ public class RadarController implements Listener {
     
     public RadarController(EisenRadarPlugin plugin) {
         this.plugin = plugin;
-        this.config = plugin.getEisenRadarConfig();
         this.radarsDir = new File(plugin.getDataFolder(), "radars");
         if (radarsDir.isFile() || !radarsDir.exists() && !radarsDir.mkdirs()) {
             throw new Error("folder " + radarsDir + " doesn't exist and could not be created or is a file");
         }
+    }
+    
+    // ENABLE & DISABLE
+    
+    /**
+     * Run by the plugin when being enabled.
+     */
+    public void onEnable() {
+        this.config = plugin.getEisenRadarConfig();
+        this.barStyle = config.getBarStyle();
+        this.barColor = config.getBarColor();
+        this.barProgress = config.getBarProgress();
+        this.barFlags = config.getBarFlags().toArray(new BarFlag[config.getBarFlags().size()]);
+        
+        plugin.getServer().getOnlinePlayers().forEach(this::loadRadarBar);
+    }
+    
+    /**
+     * Run by the plugin when being disabled.
+     */
+    public void onDisable() {
+        worldRadarMap.keySet().forEach(this::saveRadarMap);
+        worldRadarMap.clear();
+        playerRadarMap.forEach((player, bar) -> bar.getBossBar().removeAll());
+        playerRadarMap.clear();
     }
     
     // ACTIONS
@@ -170,29 +194,6 @@ public class RadarController implements Listener {
     }
     
     // PLUGIN EVENT HANDLERS
-    
-    /**
-     * Run by the plugin when being enabled.
-     */
-    public void onEnable() {
-        this.config = plugin.getEisenRadarConfig();
-        this.barStyle = config.getBarStyle();
-        this.barColor = config.getBarColor();
-        this.barProgress = config.getBarProgress();
-        this.barFlags = config.getBarFlags().toArray(new BarFlag[config.getBarFlags().size()]);
-        
-        plugin.getServer().getOnlinePlayers().forEach(this::loadRadarBar);
-    }
-    
-    /**
-     * Run by the plugin when being disabled.
-     */
-    public void onDisable() {
-        worldRadarMap.keySet().forEach(this::saveRadarMap);
-        worldRadarMap.clear();
-        playerRadarMap.forEach((player, bar) -> bar.getBossBar().removeAll());
-        playerRadarMap.clear();
-    }
     
     /**
      * Run by the plugin every tick asynchronously.

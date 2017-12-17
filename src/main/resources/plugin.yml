@@ -1,5 +1,5 @@
 name: EisenRadar
-version: 1.2
+version: 1.2.1
 main: eisenwave.radar.EisenRadarPlugin
 
 # All permissions start with "eisenradar" and belong into 4 distinct categories:
@@ -68,7 +68,7 @@ permissions:
     default: true
     description: "/radar"
   eisenradar.command.eisenradar:
-    default: true
+    default: op
     description: "/eisenradar"
 
 commands:
