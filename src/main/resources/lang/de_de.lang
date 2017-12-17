@@ -15,6 +15,7 @@ command.radar.edit.pos = Position von &6%s&r auf &6%s&r gesetzt.
 command.radar.edit.infrange.true = Unendliche Reichweite für &6%s&r aktiviert.
 command.radar.edit.infrange.false = Unendliche Reichweite für &6%s&r deaktiviert.
 command.radar.edit.symbol = Symbol von &6%s&r auf "%s" gesetzt.
+command.radar.remove_multiple = &6%d&r Radarpunkte wurden entfernt.
 command.radar.remove.bad_id = Radarpunkt &6%s&r existiert nicht.
 command.radar.remove.success = Radarpunkt &6%s&r wurde entfernt.
 command.radar.settings.wprange.bad_range_negative = Wegpunktreichweite muss positiv ein.

@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
     
     private final static String
-        USAGE = "/radar (add|edit|list|on|off|settings|toggle)",
         USAGE_ADD = "/radar add <id> <symbol> (here|<yaw>|<x> <z>)",
         USAGE_REMOVE = "/radar remove <id>",
         USAGE_EDIT = "/radar edit <id> (infrange|pos|symbol) ...",
@@ -175,12 +174,17 @@ public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
                 }
                 
                 RadarMap map = plugin.getRadarController().getRadarMap(player.getWorld());
-                WayPoint dot = map.remove(args[1]);
-                if (dot == null) {
-                    localizer.messageFormat(player, "format.err", "command.radar.remove.bad_id", args[1]);
+                if (args[1].equals("*")) {
+                    int count = map.size();
+                    map.clear();
+                    localizer.messageFormat(player, "format.msg", "command.radar.remove_multiple", count);
                 }
                 else {
-                    localizer.messageFormat(player, "format.msg", "command.radar.remove.success", args[1]);
+                    WayPoint dot = map.remove(args[1]);
+                    if (dot == null)
+                        localizer.messageFormat(player, "format.err", "command.radar.remove.bad_id", args[1]);
+                    else
+                        localizer.messageFormat(player, "format.msg", "command.radar.remove.success", args[1]);
                 }
                 return true;
             }

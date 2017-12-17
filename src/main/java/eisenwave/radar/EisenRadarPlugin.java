@@ -28,7 +28,7 @@ import java.time.Instant;
 
 public class EisenRadarPlugin extends JavaPlugin implements Listener {
     
-    public final static Instant TIMESTAMP = Instant.ofEpochMilli(1513514946814L);
+    public final static Instant TIMESTAMP = Instant.ofEpochMilli(1513514946814L); //TODO 1.2.3 timestamp
     
     private URL wordURL;
     private WordOfEisenwave wordOfEisenwave;
@@ -68,7 +68,9 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
     }
     
     private boolean initConfig() {
-        saveDefaultConfig();
+        if (enabledOnce) reloadConfig();
+        else saveDefaultConfig();
+        
         try {
             config = new EisenRadarConfig(getConfig());
             return true;
