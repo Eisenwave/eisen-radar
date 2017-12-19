@@ -10,6 +10,8 @@ import eisenwave.radar.lang.PluginLanguage;
 import eisenwave.radar.model.RadarMap;
 import eisenwave.radar.model.WordOfEisenwave;
 import eisenwave.radar.persist.RadarMapDeserializer;
+import eisenwave.radar.util.BukkitVersion;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,7 +30,7 @@ import java.time.Instant;
 
 public class EisenRadarPlugin extends JavaPlugin implements Listener {
     
-    public final static Instant TIMESTAMP = Instant.ofEpochMilli(1513514946814L); //TODO 1.2.3 timestamp
+    public final static Instant TIMESTAMP = Instant.ofEpochMilli(1513525463257L);
     
     private URL wordURL;
     private WordOfEisenwave wordOfEisenwave;
@@ -81,10 +83,21 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
     }
     
     private boolean initLanguage() {
+        boolean autoLocale;
+        try {
+            BukkitVersion version = new BukkitVersion(Bukkit.getBukkitVersion());
+            autoLocale = version.isNewerEqual(new BukkitVersion("1.12"));
+            getLogger().info(autoLocale? "enabled auto-localization" : "disabled auto-localization due to API version");
+        } catch (Exception ex) {
+            getLogger().warning("disabling auto-localization due to parse error:");
+            ex.printStackTrace();
+            autoLocale = false;
+        }
+        
         PluginLanguage primary;
         try {
             primary = new LanguageDeserializer("en_us.lang").fromResource(getClass(), "lang/en_us.lang");
-            localizer = new Localizer(primary);
+            localizer = new Localizer(primary, autoLocale);
         } catch (IOException ex) {
             getLogger().severe("Failed to load internal language: " + ex.getMessage());
             return false;

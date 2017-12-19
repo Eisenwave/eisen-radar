@@ -16,10 +16,16 @@ public class Localizer {
     
     private final Map<String, PluginLanguage> languages = new HashMap<>();
     private final PluginLanguage main;
+    private final boolean autoLocale;
     
-    public Localizer(@NotNull PluginLanguage primaryLanguage) {
+    public Localizer(@NotNull PluginLanguage primaryLanguage, boolean autoLocale) {
         this.main = primaryLanguage;
         this.languages.put(main.getLocale(), main);
+        this.autoLocale = autoLocale;
+    }
+    
+    public boolean isAutoLocale() {
+        return autoLocale;
     }
     
     // TRANSLATE
@@ -45,29 +51,6 @@ public class Localizer {
      */
     public String translate(CommandSender sender, String key, Object... args) {
         return getLanguage(sender).get(key, args);
-    }
-    
-    /**
-     * Translates a message for a player.
-     *
-     * @param player the sender
-     * @param key the translation key
-     * @return the translation
-     */
-    public String translate(Player player, String key) {
-        return getLanguage(player.getLocale()).get(key);
-    }
-    
-    /**
-     * Translates a message for a player with given arguments.
-     *
-     * @param player the sender
-     * @param key the translation key
-     * @param args the arguments
-     * @return the translation
-     */
-    public String translate(Player player, String key, Object... args) {
-        return getLanguage(player.getLocale()).get(key, args);
     }
     
     // TRANSLATE WITH FORMAT
@@ -117,7 +100,7 @@ public class Localizer {
      * @return the translation
      */
     public String translateFormat(Player player, String fmtKey, String msgKey) {
-        PluginLanguage lang = getLanguage(player.getLocale());
+        PluginLanguage lang = getLanguage(player);
         return lang.get(fmtKey, lang.get(msgKey));
     }
     
@@ -134,31 +117,31 @@ public class Localizer {
      * @return the translation
      */
     public String translateFormat(Player player, String fmtKey, String msgKey, Object... args) {
-        PluginLanguage lang = getLanguage(player.getLocale());
+        PluginLanguage lang = getLanguage(player);
         return lang.get(fmtKey, lang.get(msgKey, args));
     }
     
     // MESSAGE
     
     /**
-     * Sends a localized message to a player.
+     * Sends a localized message to a sender.
      *
-     * @param player the player to whom the messages is sent
+     * @param sender the player to whom the messages is sent
      * @param key the translation key
      */
-    public void message(CommandSender player, String key) {
-        player.sendMessage(translate(player, key));
+    public void message(CommandSender sender, String key) {
+        sender.sendMessage(translate(sender, key));
     }
     
     /**
-     * Sends a localized message to a player.
+     * Sends a localized message to a sender.
      *
-     * @param player the player to whom the messages is sent
+     * @param sender the player to whom the messages is sent
      * @param key the translation key
      * @param args the translation arguments
      */
-    public void message(CommandSender player, String key, Object... args) {
-        player.sendMessage(translate(player, key, args));
+    public void message(CommandSender sender, String key, Object... args) {
+        sender.sendMessage(translate(sender, key, args));
     }
     
     // MESSAGE WITH FORMAT
@@ -171,12 +154,12 @@ public class Localizer {
      * <li>A message key which is being translated and substituted in the format
      * </ul>
      *
-     * @param player the player to whom the messages is sent
+     * @param sender the player to whom the messages is sent
      * @param fmtKey the format key
      * @param msgKey the message key
      */
-    public void messageFormat(CommandSender player, String fmtKey, String msgKey) {
-        player.sendMessage(translateFormat(player, fmtKey, msgKey));
+    public void messageFormat(CommandSender sender, String fmtKey, String msgKey) {
+        sender.sendMessage(translateFormat(sender, fmtKey, msgKey));
     }
     
     /**
@@ -187,13 +170,13 @@ public class Localizer {
      * <li>A message key which is being translated and substituted in the format
      * </ul>
      *
-     * @param player the player to whom the messages is sent
+     * @param sender the player to whom the messages is sent
      * @param fmtKey the format key
      * @param msgKey the message key
      * @param args the translation arguments
      */
-    public void messageFormat(CommandSender player, String fmtKey, String msgKey, Object... args) {
-        player.sendMessage(translateFormat(player, fmtKey, msgKey, args));
+    public void messageFormat(CommandSender sender, String fmtKey, String msgKey, Object... args) {
+        sender.sendMessage(translateFormat(sender, fmtKey, msgKey, args));
     }
     
     // OTHER STUFF
@@ -233,7 +216,9 @@ public class Localizer {
      */
     @NotNull
     public PluginLanguage getLanguage(@NotNull CommandSender sender) {
-        return sender instanceof Player? getLanguage(((Player) sender).getLocale()) : getPrimaryLanguage();
+        return autoLocale && sender instanceof Player?
+            getLanguage(((Player) sender).getLocale()) :
+            getPrimaryLanguage();
     }
     
     /**

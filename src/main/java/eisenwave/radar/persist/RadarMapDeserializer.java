@@ -45,11 +45,11 @@ public class RadarMapDeserializer implements YamlDeserializer<RadarMap> {
         
             boolean worldPos;
             RadarPosition pos;
-            if (dotSection.contains("yaw", true)) {
+            if (dotSection.contains("yaw")) {
                 pos = new FixedRadarPos((float) dotSection.getDouble("yaw"));
                 worldPos = false;
             }
-            else if (dotSection.contains("x", true) && dotSection.contains("z", true)) {
+            else if (dotSection.contains("x") && dotSection.contains("z")) {
                 pos = new WorldRadarPos(dotSection.getDouble("x"), dotSection.getDouble("z"));
                 worldPos = true;
             }
