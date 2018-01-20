@@ -8,10 +8,11 @@ import eisenwave.radar.io.*;
 import eisenwave.radar.lang.Localizer;
 import eisenwave.radar.lang.PluginLanguage;
 import eisenwave.radar.model.RadarMap;
-import eisenwave.radar.model.WordOfEisenwave;
-import eisenwave.radar.persist.RadarMapDeserializer;
-import eisenwave.radar.util.BukkitVersion;
+import eisenwave.radar.data.WordOfEisenwave;
+import eisenwave.radar.io.RadarMapDeserializer;
+import eisenwave.radar.data.BukkitVersion;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,12 +31,11 @@ import java.time.Instant;
 
 public class EisenRadarPlugin extends JavaPlugin implements Listener {
     
-    public final static Instant TIMESTAMP = Instant.ofEpochMilli(1513719067871L);
+    public final static Instant TIMESTAMP = Instant.ofEpochMilli(1516459705506L);
     
     private URL wordURL;
     private WordOfEisenwave wordOfEisenwave;
     private EisenRadarConfig config;
-    private RadarMap defaultMap;
     private RadarController controller;
     private Localizer localizer;
     private BukkitTask controllerTask;
@@ -54,7 +54,7 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
     
     @Override
     public void onEnable() {
-        if (!initConfig() || !initLanguage() || !initDefaultMap()) {
+        if (!initConfig() || !initLanguage()) {
             setEnabled(false);
             return;
         }
@@ -127,15 +127,17 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
         return true;
     }
     
-    private boolean initDefaultMap() {
+    /*
+    private boolean initDefaultMap(World world) {
         try (InputStream stream = getResource("default_radar.yml")) {
-            defaultMap = new RadarMapDeserializer().fromStream(stream);
+            defaultMap = new RadarMapDeserializer(world).fromStream(stream);
             return true;
         } catch (IOException ex) {
             getLogger().severe("Failed loading radar.yml: " + ex.getMessage());
             return false;
         }
     }
+    */
     
     private void initController() {
         if (!enabledOnce)
@@ -200,8 +202,10 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
      *
      * @return the radar map
      */
-    public RadarMap getNewDefaultMap() {
-        return defaultMap.clone();
+    public RadarMap getNewDefaultMap(World world) throws IOException {
+        try (InputStream stream = getResource("default_radar.yml")) {
+            return new RadarMapDeserializer(world).fromStream(stream);
+        }
     }
     
     /**

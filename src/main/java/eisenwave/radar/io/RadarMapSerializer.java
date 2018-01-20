@@ -1,13 +1,16 @@
-package eisenwave.radar.persist;
+package eisenwave.radar.io;
 
 import eisenwave.radar.model.WayPoint;
 import eisenwave.radar.model.RadarMap;
 import eisenwave.radar.model.pos.FixedRadarPos;
 import eisenwave.radar.model.pos.RadarPosition;
 import eisenwave.radar.model.pos.WorldRadarPos;
+import eisenwave.radar.model.track.RadarTracker;
+import eisenwave.radar.model.track.TrackerType;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -15,17 +18,30 @@ public class RadarMapSerializer implements YamlSerializer<RadarMap> {
     
     private final static String COLOR_CHAR = String.valueOf(ChatColor.COLOR_CHAR);
     
+    private RadarMap map;
+    
     @Override
-    public void toYaml(RadarMap map, YamlConfiguration yaml) {
-        writeSettings(yaml.createSection("settings"), map);
-        writeDots(yaml.createSection("dots"), map);
+    public void toYaml(@NotNull RadarMap map, YamlConfiguration yaml) {
+        this.map = map;
+        
+        writeSettings(yaml.createSection("settings"));
+        writeTrackers(yaml.createSection("trackers"));
+        writeDots(yaml.createSection("dots"));
     }
     
-    private void writeSettings(ConfigurationSection section, RadarMap map) {
+    private void writeSettings(ConfigurationSection section) {
         section.set("waypoint_range", map.getWayPointRange());
     }
     
-    private void writeDots(ConfigurationSection section, RadarMap map) {
+    private void writeTrackers(ConfigurationSection section) {
+        for (TrackerType type : TrackerType.values()) {
+            RadarTracker tracker = map.getTracker(type);
+            ConfigurationSection trackerSection = section.createSection(type.toString().toLowerCase());
+            trackerSection.set("enabled", tracker != null);
+        }
+    }
+    
+    private void writeDots(ConfigurationSection section) {
         for (Map.Entry<String, WayPoint> entry : map.entrySet()) {
             WayPoint dot = entry.getValue();
             RadarPosition pos = dot.getPosition();

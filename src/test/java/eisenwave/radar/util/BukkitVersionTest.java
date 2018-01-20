@@ -1,5 +1,6 @@
 package eisenwave.radar.util;
 
+import eisenwave.radar.data.BukkitVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

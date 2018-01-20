@@ -1,4 +1,4 @@
-package eisenwave.radar.model;
+package eisenwave.radar.data;
 
 import eisenwave.radar.util.ColorCodeUtil;
 import org.bukkit.ChatColor;

@@ -1,5 +1,6 @@
 package eisenwave.radar.model;
 
+import eisenwave.radar.data.RadarSymbol;
 import eisenwave.radar.model.pos.RadarPosition;
 import org.jetbrains.annotations.NotNull;
 

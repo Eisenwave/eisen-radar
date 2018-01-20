@@ -1,4 +1,4 @@
-package eisenwave.radar.util;
+package eisenwave.radar.data;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,18 +49,42 @@ public class BukkitVersion implements Comparable<BukkitVersion> {
     
     // PREDICATES
     
+    /**
+     * Tests whether this version is more recent than the given version.
+     *
+     * @param version the version
+     * @return whether this version is newer
+     */
     public boolean isNewerThan(BukkitVersion version) {
         return compareTo(version) > 0;
     }
     
+    /**
+     * Tests whether this version is more or equally recent than the given version.
+     *
+     * @param version the version
+     * @return whether this version is newer or equal
+     */
     public boolean isNewerEqual(BukkitVersion version) {
         return compareTo(version) >= 0;
     }
     
+    /**
+     * Tests whether this version is less recent than the given version.
+     *
+     * @param version the version
+     * @return whether this version is older
+     */
     public boolean isOlderThan(BukkitVersion version) {
         return compareTo(version) < 0;
     }
     
+    /**
+     * Tests whether this version is less or equally recent than the given version.
+     *
+     * @param version the version
+     * @return whether this version is newer or equal
+     */
     public boolean isOlderEqual(BukkitVersion version) {
         return compareTo(version) <= 0;
     }

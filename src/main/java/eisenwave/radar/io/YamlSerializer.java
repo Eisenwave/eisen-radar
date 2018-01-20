@@ -1,4 +1,4 @@
-package eisenwave.radar.persist;
+package eisenwave.radar.io;
 
 import eisenwave.commons.io.TextSerializer;
 import org.bukkit.configuration.file.YamlConfiguration;

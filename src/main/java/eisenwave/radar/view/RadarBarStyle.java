@@ -1,6 +1,6 @@
 package eisenwave.radar.view;
 
-import eisenwave.radar.model.RadarSymbol;
+import eisenwave.radar.data.RadarSymbol;
 import org.jetbrains.annotations.NotNull;
 
 public class RadarBarStyle {
@@ -13,6 +13,10 @@ public class RadarBarStyle {
         this.background = background;
         this.prefix = prefix;
         this.suffix = suffix;
+    }
+    
+    public RadarBarStyle(@NotNull RadarSymbol background) {
+        this(background, "", "");
     }
     
     public RadarSymbol getBackground() {

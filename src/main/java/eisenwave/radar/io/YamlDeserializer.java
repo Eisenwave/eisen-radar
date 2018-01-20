@@ -1,4 +1,4 @@
-package eisenwave.radar.persist;
+package eisenwave.radar.io;
 
 import eisenwave.commons.io.TextDeserializer;
 import org.bukkit.configuration.InvalidConfigurationException;

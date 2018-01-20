@@ -4,7 +4,7 @@ import eisenwave.radar.EisenRadarPlugin;
 import eisenwave.radar.lang.Localizer;
 import eisenwave.radar.model.WayPoint;
 import eisenwave.radar.model.RadarMap;
-import eisenwave.radar.model.RadarSymbol;
+import eisenwave.radar.data.RadarSymbol;
 import eisenwave.radar.model.pos.FixedRadarPos;
 import eisenwave.radar.model.pos.RadarPosition;
 import eisenwave.radar.model.pos.WorldRadarPos;
@@ -103,7 +103,7 @@ public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
                 RadarPosition pos = parsePosition(player, Arrays.copyOfRange(args, 3, args.length));
                 if (pos == null) return true;
                 
-                map.add(id, pos, symbol);
+                map.addWayPoint(id, pos, symbol);
                 localizer.messageFormat(player, "format.msg", "command.radar.add.success", id);
                 return true;
             }

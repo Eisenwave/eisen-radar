@@ -1,10 +1,10 @@
 package eisenwave.radar.view;
 
-import eisenwave.radar.model.WayPoint;
-import eisenwave.radar.model.RadarSymbol;
+import eisenwave.radar.data.RadarSymbol;
 import org.bukkit.boss.BossBar;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
@@ -20,7 +20,7 @@ public class RadarBar {
     private final RadarSymbol[] buffer;
     private final float fov;
     
-    public RadarBar(@NotNull BossBar bossBar, int width, float fov, RadarBarStyle style) {
+    public RadarBar(BossBar bossBar, int width, float fov, RadarBarStyle style) {
         if (width < 0) throw new IllegalArgumentException("width must be positive");
         if (fov < 0) throw new IllegalArgumentException("fov must be positive");
         
@@ -36,12 +36,26 @@ public class RadarBar {
     
     // ACTIONS
     
-    public void draw(float yaw, WayPoint dot) {
+    public void draw(float yaw, RadarSymbol symbol) {
         float rel = ( normalize(yaw) / fov ) + 0.5F;
         if (rel >= 0 && rel <= 1) {
-            int index = (int) (rel * (buffer.length - 1));
-            buffer[index] = dot.getSymbol();
+            int index = (int) (rel * (buffer.length));
+            /* accounting for the VERY rare event that rel is EXACTLY 1 */
+            if (index == buffer.length)
+                index--;
+            buffer[index] = symbol;
         }
+    }
+    
+    /**
+     * Returns whether the given relative yaw is visible to the radar bar.
+     *
+     * @param yaw the yaw
+     * @return whether the yaw is visible on the radar bar
+     */
+    public boolean canSee(float yaw) {
+        float rel = ( normalize(yaw) / fov ) + 0.5F;
+        return rel >= 0 && rel <= 1;
     }
     
     public void setVisible(boolean visible) {

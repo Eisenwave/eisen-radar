@@ -1,12 +1,16 @@
-package eisenwave.radar.persist;
+package eisenwave.radar.io;
 
 import eisenwave.radar.model.RadarMap;
-import eisenwave.radar.model.RadarSymbol;
+import eisenwave.radar.data.RadarSymbol;
 import eisenwave.radar.model.WayPoint;
 import eisenwave.radar.model.pos.FixedRadarPos;
 import eisenwave.radar.model.pos.RadarPosition;
 import eisenwave.radar.model.pos.WorldRadarPos;
+import eisenwave.radar.model.track.RadarTracker;
+import eisenwave.radar.model.track.TrackerFactory;
+import eisenwave.radar.model.track.TrackerType;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -14,26 +18,48 @@ import org.jetbrains.annotations.Nullable;
 
 public class RadarMapDeserializer implements YamlDeserializer<RadarMap> {
     
+    private final World world;
+    private RadarMap map;
+    
+    public RadarMapDeserializer(World world) {
+        this.world = world;
+    }
+    
     @NotNull
     @Override
     public RadarMap fromYaml(YamlConfiguration yaml) {
-        RadarMap map = new RadarMap();
+        map = new RadarMap();
     
-        applySettings(yaml.getConfigurationSection("settings"), map);
+        applySettings(yaml.getConfigurationSection("settings"));
+        applyTrackers(yaml.getConfigurationSection("trackers"));
+        applyDots(yaml.getConfigurationSection("dots"));
     
-        applyDots(yaml.getConfigurationSection("dots"), map);
-        
+        //noinspection ReturnOfCollectionOrArrayField
         return map;
     }
     
-    private void applySettings(@Nullable ConfigurationSection section, RadarMap map) {
-        if (section == null) return;;
+    private void applySettings(@Nullable ConfigurationSection section) {
+        if (section == null) return;
         
         double waypointRange = section.getDouble("waypoint_range", 256);
         map.setWayPointRange(waypointRange);
     }
     
-    private void applyDots(@Nullable ConfigurationSection section, RadarMap map) {
+    private void applyTrackers(@Nullable ConfigurationSection section) {
+        if (section == null) return;
+        
+        for (TrackerType type : TrackerType.values()) {
+            ConfigurationSection trackerSection = section.getConfigurationSection(type.name().toLowerCase());
+            if (trackerSection == null) continue;
+            if (!trackerSection.getBoolean("enabled")) continue;
+    
+            RadarTracker tracker = TrackerFactory.createTracker(world, type);
+            if (tracker != null)
+                map.addTracker(tracker);
+        }
+    }
+    
+    private void applyDots(@Nullable ConfigurationSection section) {
         if (section == null) return;
         
         for (String key : section.getKeys(false)) {
@@ -55,7 +81,7 @@ public class RadarMapDeserializer implements YamlDeserializer<RadarMap> {
             }
             else continue;
         
-            WayPoint wayPoint = map.add(key, pos, symbol);
+            WayPoint wayPoint = map.addWayPoint(key, pos, symbol);
         
             if (worldPos) {
                 boolean infRange = dotSection.getBoolean("inf_range", false);

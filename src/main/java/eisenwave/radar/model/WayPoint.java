@@ -1,6 +1,7 @@
 package eisenwave.radar.model;
 
 import com.sun.istack.internal.NotNull;
+import eisenwave.radar.data.RadarSymbol;
 import eisenwave.radar.model.pos.RadarPosition;
 import eisenwave.radar.model.pos.WorldRadarPos;
 import org.bukkit.ChatColor;
