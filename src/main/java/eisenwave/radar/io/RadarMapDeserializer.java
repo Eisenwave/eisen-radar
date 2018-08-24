@@ -1,14 +1,15 @@
 package eisenwave.radar.io;
 
+import eisenwave.radar.EisenRadarPlugin;
 import eisenwave.radar.model.RadarMap;
 import eisenwave.radar.data.RadarSymbol;
 import eisenwave.radar.model.WayPoint;
 import eisenwave.radar.model.pos.FixedRadarPos;
 import eisenwave.radar.model.pos.RadarPosition;
 import eisenwave.radar.model.pos.WorldRadarPos;
-import eisenwave.radar.model.track.RadarTracker;
-import eisenwave.radar.model.track.TrackerFactory;
-import eisenwave.radar.model.track.TrackerType;
+import eisenwave.radar.model.tracker.RadarTracker;
+import eisenwave.radar.model.tracker.TrackerFactory;
+import eisenwave.radar.model.tracker.TrackerType;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -18,10 +19,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class RadarMapDeserializer implements YamlDeserializer<RadarMap> {
     
+    private final EisenRadarPlugin plugin;
     private final World world;
     private RadarMap map;
     
-    public RadarMapDeserializer(World world) {
+    public RadarMapDeserializer(EisenRadarPlugin plugin, World world) {
+        this.plugin = plugin;
         this.world = world;
     }
     
@@ -47,15 +50,15 @@ public class RadarMapDeserializer implements YamlDeserializer<RadarMap> {
     
     private void applyTrackers(@Nullable ConfigurationSection section) {
         if (section == null) return;
+        TrackerFactory factory = plugin.getTrackerFactory();
         
         for (TrackerType type : TrackerType.values()) {
             ConfigurationSection trackerSection = section.getConfigurationSection(type.name().toLowerCase());
             if (trackerSection == null) continue;
             if (!trackerSection.getBoolean("enabled")) continue;
     
-            RadarTracker tracker = TrackerFactory.createTracker(world, type);
-            if (tracker != null)
-                map.addTracker(tracker);
+            RadarTracker tracker = factory.createTracker(world, type);
+            map.addTracker(tracker);
         }
     }
     
@@ -87,6 +90,9 @@ public class RadarMapDeserializer implements YamlDeserializer<RadarMap> {
                 boolean infRange = dotSection.getBoolean("inf_range", false);
                 wayPoint.setInfiniteRange(infRange);
             }
+    
+            String permission = dotSection.getString("permission", null);
+            wayPoint.setPermission(permission);
         }
     }
     

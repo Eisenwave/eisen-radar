@@ -1,5 +1,8 @@
 package eisenwave.radar.model.pos;
 
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+
 public interface RadarPosition {
     
     /**
@@ -47,6 +50,17 @@ public interface RadarPosition {
      */
     default float yawRelTo(double x, double z, float yaw) {
         return yawRelTo(x, z) - yaw;
+    }
+    
+    /**
+     * Returns the yaw relative to the location.
+     *
+     * @param loc the location
+     * @return the relative yaw
+     * @see #yawRelTo(double, double, float)
+     */
+    default float yawRelTo(Location loc) {
+        return yawRelTo(loc.getX(), loc.getZ(), loc.getYaw());
     }
     
 }

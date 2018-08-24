@@ -1,4 +1,4 @@
-package eisenwave.radar.data;
+package eisenwave.radar;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

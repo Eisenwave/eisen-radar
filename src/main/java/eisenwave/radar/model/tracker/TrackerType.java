@@ -1,4 +1,4 @@
-package eisenwave.radar.model.track;
+package eisenwave.radar.model.tracker;
 
 public enum TrackerType {
     PLAYER,

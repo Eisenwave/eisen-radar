@@ -5,11 +5,15 @@ import eisenwave.radar.data.RadarSymbol;
 import eisenwave.radar.model.pos.RadarPosition;
 import eisenwave.radar.model.pos.WorldRadarPos;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.Nullable;
 
 public class WayPoint extends RadarDot {
     
     private String id;
     private boolean infRange = false;
+    
+    private String permission = null;
+    private boolean trans = false;
     
     public WayPoint(@NotNull String id, @NotNull RadarPosition pos, @NotNull RadarSymbol symbol) {
         super(pos, symbol);
@@ -37,6 +41,14 @@ public class WayPoint extends RadarDot {
         return infRange;
     }
     
+    public String getPermission() {
+        return permission;
+    }
+    
+    public boolean isTransient() {
+        return trans;
+    }
+    
     // SETTERS
     
     public void setInfiniteRange(boolean infRange) {
@@ -47,21 +59,34 @@ public class WayPoint extends RadarDot {
         this.id = id;
     }
     
+    public void setPermission(@Nullable String permission) {
+        this.permission = permission;
+    }
+    
+    public void setTransient(boolean trans) {
+        this.trans = trans;
+    }
+    
     // MISC
     
     @Override
     public String toString() {
-        if (getPosition() instanceof WorldRadarPos)
-            return String.format("{symbol: \"%s\", pos: %s, infRange: %b}",
-                getSymbol().toString() + ChatColor.RESET,
-                getPosition(),
-                infRange
-            );
-        else
-            return String.format("{symbol: \"%s\", pos: %s}",
-                getSymbol().toString() + ChatColor.RESET,
-                getPosition()
-            );
+        StringBuilder builder = new StringBuilder("{symbol: \"")
+            .append(getSymbol())
+            .append(ChatColor.RESET)
+            .append("\", pos: ")
+            .append(getPosition());
+    
+        if (getPermission() != null)
+            builder
+                .append(", permission: ")
+                .append(getPermission());
+        if (getPosition() instanceof WorldRadarPos && infRange)
+            builder.append(", infRange");
+        if (isTransient())
+            builder.append(", transient");
+        
+        return builder.append("}").toString();
     }
     
 }

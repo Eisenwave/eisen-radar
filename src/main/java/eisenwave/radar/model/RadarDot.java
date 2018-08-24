@@ -3,6 +3,7 @@ package eisenwave.radar.model;
 import eisenwave.radar.data.RadarSymbol;
 import eisenwave.radar.model.pos.RadarPosition;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class RadarDot {
     
@@ -14,6 +15,8 @@ public class RadarDot {
         this.symbol = symbol;
     }
     
+    // GETTERS
+    
     public RadarPosition getPosition() {
         return pos;
     }
@@ -22,11 +25,13 @@ public class RadarDot {
         return symbol;
     }
     
-    public void setPosition(RadarPosition pos) {
+    // SETTERS
+    
+    public void setPosition(@NotNull RadarPosition pos) {
         this.pos = pos;
     }
     
-    public void setSymbol(RadarSymbol symbol) {
+    public void setSymbol(@NotNull RadarSymbol symbol) {
         this.symbol = symbol;
     }
     

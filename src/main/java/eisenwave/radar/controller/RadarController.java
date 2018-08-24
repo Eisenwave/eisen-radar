@@ -8,7 +8,6 @@ import eisenwave.radar.data.RadarSymbol;
 import eisenwave.radar.model.pos.RadarPosition;
 import eisenwave.radar.io.RadarMapDeserializer;
 import eisenwave.radar.io.RadarMapSerializer;
-import eisenwave.radar.model.track.RadarTracker;
 import eisenwave.radar.view.RadarBar;
 import eisenwave.radar.view.RadarBarStyle;
 import org.bukkit.Bukkit;
@@ -30,9 +29,8 @@ import java.io.IOError;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RadarController implements Listener {
     
@@ -40,7 +38,7 @@ public class RadarController implements Listener {
     
     private final EisenRadarPlugin plugin;
     private final Map<World, RadarMap> worldRadarMap = new HashMap<>();
-    private final Map<Player, RadarBar> playerRadarMap = new WeakHashMap<>();
+    private final Map<Player, RadarBar> playerRadarMap = new ConcurrentHashMap<>();
     
     private EisenRadarConfig config;
     private BarStyle barStyle;
@@ -190,7 +188,7 @@ public class RadarController implements Listener {
         }
         else try {
             plugin.getLogger().info("Loading radar of world \"" + world.getName() + "\" ...");
-            map = new RadarMapDeserializer(world).fromFile(file);
+            map = new RadarMapDeserializer(plugin, world).fromFile(file);
         } catch (IOException ex) {
             try {
                 map = plugin.getNewDefaultMap(world);
@@ -221,7 +219,7 @@ public class RadarController implements Listener {
     public void onAsyncTick() {
         Location loc = new Location(null, 0, 0, 0);
         
-        this.worldRadarMap.forEach((world, map) -> map.getTrackers().forEach(RadarTracker::update));
+        //this.worldRadarMap.forEach((world, map) -> map.getTrackers().forEach(RadarTracker::update));
         
         this.playerRadarMap.forEach((player, bar) -> {
             if (bar.isVisible()) {
@@ -268,8 +266,9 @@ public class RadarController implements Listener {
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldSave(WorldSaveEvent event) {
-        if (plugin.getEisenRadarConfig().getAutoSave())
+        if (plugin.getEisenRadarConfig().getAutoSave()) {
             saveRadarMap(event.getWorld());
+        }
     }
     
     // UTIL
@@ -287,11 +286,13 @@ public class RadarController implements Listener {
     private void draw(RadarMap map, Player player, RadarBar bar, double x, double z, float yaw) {
         double maxRange = map.getWayPointRange();
         final double maxRangeSquared = maxRange * maxRange;
-        
-        map.getTrackers().forEach(tracker -> tracker.display(player, bar));
-        
+    
         bar.clear();
+        
         map.forEach((id, dot) -> {
+            String permission = dot.getPermission();
+            if (permission != null && !player.hasPermission(permission)) return;
+            
             RadarPosition pos = dot.getPosition();
             boolean draw = dot.hasInfiniteRange();
             if (!draw) {
@@ -301,6 +302,9 @@ public class RadarController implements Listener {
             if (draw)
                 bar.draw(dot.getPosition().yawRelTo(x, z, yaw), dot.getSymbol());
         });
+    
+        map.getTrackers().forEach(tracker -> tracker.display(player, bar));
+        
         bar.update();
     }
     

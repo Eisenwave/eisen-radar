@@ -1,5 +1,7 @@
 package eisenwave.radar.model.pos;
 
+import org.bukkit.Location;
+
 public class WorldRadarPos implements RadarPosition {
     
     private double x, z;
@@ -7,6 +9,10 @@ public class WorldRadarPos implements RadarPosition {
     public WorldRadarPos(double x, double z) {
         setX(x);
         setZ(z);
+    }
+    
+    public WorldRadarPos(Location loc) {
+        this(loc.getX(), loc.getZ());
     }
     
     @SuppressWarnings("SuspiciousNameCombination")

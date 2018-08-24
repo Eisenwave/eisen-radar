@@ -5,8 +5,8 @@ import eisenwave.radar.model.RadarMap;
 import eisenwave.radar.model.pos.FixedRadarPos;
 import eisenwave.radar.model.pos.RadarPosition;
 import eisenwave.radar.model.pos.WorldRadarPos;
-import eisenwave.radar.model.track.RadarTracker;
-import eisenwave.radar.model.track.TrackerType;
+import eisenwave.radar.model.tracker.RadarTracker;
+import eisenwave.radar.model.tracker.TrackerType;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,6 +20,7 @@ public class RadarMapSerializer implements YamlSerializer<RadarMap> {
     
     private RadarMap map;
     
+    @SuppressWarnings("AssignmentOrReturnOfFieldWithMutableType")
     @Override
     public void toYaml(@NotNull RadarMap map, YamlConfiguration yaml) {
         this.map = map;
@@ -45,10 +46,15 @@ public class RadarMapSerializer implements YamlSerializer<RadarMap> {
         for (Map.Entry<String, WayPoint> entry : map.entrySet()) {
             WayPoint dot = entry.getValue();
             RadarPosition pos = dot.getPosition();
-        
+            if (dot.isTransient()) continue;
+            
             ConfigurationSection dotSection = section.createSection(entry.getKey());
             dotSection.set("symbol", dot.getSymbol().toString().replace(COLOR_CHAR, "&"));
         
+            String permission = dot.getPermission();
+            if (permission != null)
+                dotSection.set("permission", permission);
+            
             if (pos instanceof FixedRadarPos) {
                 dotSection.set("yaw", ((FixedRadarPos) pos).getYaw());
             } else if (pos instanceof WorldRadarPos) {

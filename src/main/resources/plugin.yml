@@ -1,5 +1,5 @@
 name: EisenRadar
-version: 1.2.5
+version: 1.3.1
 main: eisenwave.radar.EisenRadarPlugin
 
 # All permissions start with "eisenradar" and belong into 4 distinct categories:
@@ -43,6 +43,9 @@ permissions:
   eisenradar.get.info:
     default: op
     description: "Get info about the plugin's state"
+  eisenradar.get.trackers:
+    default: op
+    description: "Get info about the world's trackers"
 
   eisenradar.set.settings:
     default: op

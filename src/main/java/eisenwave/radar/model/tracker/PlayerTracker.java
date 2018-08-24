@@ -1,5 +1,6 @@
-package eisenwave.radar.model.track;
+package eisenwave.radar.model.tracker;
 
+import eisenwave.radar.EisenRadarPlugin;
 import eisenwave.radar.data.RadarSymbol;
 import eisenwave.radar.data.Vec2;
 import eisenwave.radar.util.VecUtil;
@@ -17,8 +18,8 @@ public class PlayerTracker extends RadarTracker {
     
     private final List<Vec2> list = new LinkedList<>();
     
-    public PlayerTracker(World world) {
-        super(world, new RadarSymbol("#"));
+    public PlayerTracker(EisenRadarPlugin plugin, World world) {
+        super(plugin, world, new RadarSymbol("#"));
     }
     
     @Override
@@ -27,7 +28,7 @@ public class PlayerTracker extends RadarTracker {
     }
     
     @Override
-    public void update() {
+    public void onTick() {
         list.clear();
         world.getPlayers().forEach(player -> list.add(posOf(player)));
     }

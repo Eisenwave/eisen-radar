@@ -8,6 +8,8 @@ import eisenwave.radar.data.RadarSymbol;
 import eisenwave.radar.model.pos.FixedRadarPos;
 import eisenwave.radar.model.pos.RadarPosition;
 import eisenwave.radar.model.pos.WorldRadarPos;
+import eisenwave.radar.model.tracker.RadarTracker;
+import eisenwave.radar.model.tracker.TrackerType;
 import eisenwave.radar.view.RadarBar;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -25,11 +27,14 @@ public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
     private final static String
         USAGE_ADD = "/radar add <id> <symbol> (here|<yaw>|<x> <z>)",
         USAGE_REMOVE = "/radar remove <id>",
-        USAGE_EDIT = "/radar edit <id> (infrange|pos|symbol) ...",
+        USAGE_EDIT = "/radar edit <id> (infrange|perm[ission]|pos[ition]|symbol|transient) ...",
         USAGE_EDIT_INFRANGE = "/radar edit <id> infrange (true|false)",
+        USAGE_EDIT_PERMISSION = "/radar edit <id> permission (<permission>|null)",
         USAGE_EDIT_POS = "/radar edit <id> pos (here|<yaw>|<x> <z>)",
         USAGE_EDIT_SYMBOL = "/radar edit <id> symbol <symbol>",
-        USAGE_SETTINGS = "/radar settings wprange [infinite|<max waypoint range>]";
+        USAGE_EDIT_TRANSIENT = "/radar edit <id> transient (true|false)",
+        USAGE_SETTINGS = "/radar settings wprange [infinite|<max waypoint range>]",
+        USAGE_TRACKER = "/radar tracker (death|player) (on|off)";
     
     private final Localizer localizer;
     
@@ -124,18 +129,6 @@ public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
                 }
                 
                 switch (args[2]) {
-                    case "pos": {
-                        if (args.length < 4) {
-                            command.setUsage(localizer.translate(player, "format.use", USAGE_EDIT_POS));
-                            return false;
-                        }
-                        RadarPosition pos = parsePosition(player, Arrays.copyOfRange(args, 3, args.length));
-                        if (pos == null) return true;
-                        
-                        dot.setPosition(pos);
-                        localizer.messageFormat(player, "format.msg", "command.radar.edit.pos", id, pos);
-                        return true;
-                    }
                     case "infrange": {
                         if (args.length < 4) {
                             command.setUsage(localizer.translate(player, "format.use", USAGE_EDIT_INFRANGE));
@@ -148,6 +141,36 @@ public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
                         localizer.messageFormat(player, "format.msg", message, id);
                         return true;
                     }
+                    case "pos":
+                    case "position": {
+                        if (args.length < 4) {
+                            command.setUsage(localizer.translate(player, "format.use", USAGE_EDIT_POS));
+                            return false;
+                        }
+                        RadarPosition pos = parsePosition(player, Arrays.copyOfRange(args, 3, args.length));
+                        if (pos == null) return true;
+                        
+                        dot.setPosition(pos);
+                        localizer.messageFormat(player, "format.msg", "command.radar.edit.pos", id, pos);
+                        return true;
+                    }
+                    case "perm":
+                    case "permission": {
+                        if (args.length < 4) {
+                            command.setUsage(localizer.translate(player, "format.use", USAGE_EDIT_PERMISSION));
+                            return false;
+                        }
+                        if (args[3].equals("null")) {
+                            dot.setPermission(null);
+                            localizer.messageFormat(player, "format.msg", "command.radar.edit.no_permission");
+                        }
+                        else {
+                            dot.setPermission(args[3]);
+                            localizer.messageFormat(player, "format.msg", "command.radar.edit.permission",
+                                id, args[3]);
+                        }
+                        return true;
+                    }
                     case "symbol": {
                         if (args.length < 4) {
                             command.setUsage(localizer.translate(player, "format.use", USAGE_EDIT_SYMBOL));
@@ -158,6 +181,17 @@ public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
                         dot.setSymbol(symbol);
                         localizer.messageFormat(player, "format.msg", "command.radar.edit.symbol",
                             id, symbolStr + ChatColor.RESET);
+                        return true;
+                    }
+                    case "transient": {
+                        if (args.length < 4) {
+                            command.setUsage(localizer.translate(player, "format.use", USAGE_EDIT_TRANSIENT));
+                            return false;
+                        }
+                        boolean trans = Boolean.parseBoolean(args[3]);
+                        dot.setTransient(true);
+                        String key = trans? "command.radar.edit.transient_true" : "command.radar.edit.transient_false";
+                        localizer.messageFormat(player, "format.msg", key, id);
                         return true;
                     }
                 }
@@ -236,6 +270,59 @@ public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
                 return true;
             }
             
+            case "tracker": {
+                Player player = validatePlayerWithPermission(sender, "eisenradar.set.tracker");
+                if (player == null) return true;
+                
+                if (args.length < 3 ||
+                    !args[2].equals("on") && !args[2].equals("off")) {
+                    command.setUsage(localizer.translate(player, "format.use", USAGE_TRACKER));
+                    return false;
+                }
+                
+                TrackerType type;
+                try {
+                    type = TrackerType.valueOf(args[1].toUpperCase());
+                } catch (IllegalArgumentException ex) {
+                    return false;
+                }
+                boolean enable = args[2].equals("on");
+                
+                RadarMap map = plugin.getRadarController().getRadarMap(player.getWorld());
+                String msgKey;
+                if (enable) {
+                    msgKey = "command.tracker.on";
+                    RadarTracker tracker = plugin.getTrackerFactory().createTracker(player.getWorld(), type);
+                    map.addTracker(tracker);
+                }
+                else {
+                    msgKey = "command.tracker.off";
+                    map.removeTracker(type);
+                }
+                
+                localizer.messageFormat(player, "format.msg", msgKey, type);
+                return true;
+            }
+            
+            case "trackers": {
+                Player player = validatePlayerWithPermission(sender, "eisenradar.get.trackers");
+                if (player == null) return true;
+                
+                RadarMap map = plugin.getRadarController().getRadarMap(player.getWorld());
+                
+                String msg = Arrays.stream(TrackerType.values())
+                    .map(type -> {
+                        ChatColor color = map.hasTracker(type)? ChatColor.GREEN : ChatColor.RED;
+                        String name = type.toString().toLowerCase();
+                        return "- " + color + name + ChatColor.RESET;
+                    })
+                    .collect(Collectors.joining("\n"));
+                
+                localizer.messageFormat(player, "format.msg", "command.radar.trackers");
+                player.sendMessage(msg);
+                return true;
+            }
+            
             default: return false;
         }
     }
@@ -248,10 +335,12 @@ public class CmdRadar extends EisenRadarCommand implements SimpleTabCompleter {
         if (sender.hasPermission("eisenradar.set.add")) result.add("add");
         if (sender.hasPermission("eisenradar.set.edit")) result.add("edit");
         if (sender.hasPermission("eisenradar.get.list")) result.add("list");
+        if (sender.hasPermission("eisenradar.get.trackers")) result.add("trackers");
         if (sender.hasPermission("eisenradar.view.off")) result.add("off");
         if (sender.hasPermission("eisenradar.view.on")) result.add("on");
         if (sender.hasPermission("eisenradar.set.remove")) result.add("remove");
         if (sender.hasPermission("eisenradar.set.settings")) result.add("settings");
+        if (sender.hasPermission("eisenradar.set.tracker")) result.add("tracker");
         if (sender.hasPermission("eisenradar.view.toggle")) result.add("toggle");
         return result;
     }

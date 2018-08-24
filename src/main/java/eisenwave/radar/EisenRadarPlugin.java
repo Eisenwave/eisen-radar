@@ -8,9 +8,10 @@ import eisenwave.radar.io.*;
 import eisenwave.radar.lang.Localizer;
 import eisenwave.radar.lang.PluginLanguage;
 import eisenwave.radar.model.RadarMap;
-import eisenwave.radar.data.WordOfEisenwave;
 import eisenwave.radar.io.RadarMapDeserializer;
 import eisenwave.radar.data.BukkitVersion;
+import eisenwave.radar.controller.DeathPointController;
+import eisenwave.radar.model.tracker.TrackerFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -18,9 +19,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +40,8 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
     private WordOfEisenwave wordOfEisenwave;
     private EisenRadarConfig config;
     private RadarController controller;
+    private DeathPointController deathPointController;
+    private TrackerFactory trackerFactory;
     private Localizer localizer;
     private BukkitTask controllerTask;
     private boolean enabledOnce = false;
@@ -59,7 +64,7 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
             return;
         }
     
-        initController();
+        initControllers();
         
         if (!enabledOnce) {
             initWord();
@@ -139,13 +144,18 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
     }
     */
     
-    private void initController() {
+    private void initControllers() {
         if (!enabledOnce)
             controller = new RadarController(this);
     
         BukkitScheduler scheduler = this.getServer().getScheduler();
         controllerTask = scheduler.runTaskTimerAsynchronously(this, controller::onAsyncTick, 0, config.getPeriod());
         controller.onEnable();
+    
+        deathPointController = new DeathPointController(this);
+        deathPointController.onEnable();
+        
+        trackerFactory = new TrackerFactory(this);
     }
     
     private void initWord() {
@@ -170,8 +180,11 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
     }
     
     private void initEvents() {
-        getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(controller, this);
+        PluginManager manager = getServer().getPluginManager();
+    
+        manager.registerEvents(this, this);
+        manager.registerEvents(controller, this);
+        manager.registerEvents(deathPointController, this);
     }
     
     // DISABLE
@@ -180,6 +193,7 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
     public void onDisable() {
         controllerTask.cancel();
         controller.onDisable();
+        deathPointController.onDisable();
     }
     
     // EVENTS
@@ -204,7 +218,7 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
      */
     public RadarMap getNewDefaultMap(World world) throws IOException {
         try (InputStream stream = getResource("default_radar.yml")) {
-            return new RadarMapDeserializer(world).fromStream(stream);
+            return new RadarMapDeserializer(this, world).fromStream(stream);
         }
     }
     
@@ -213,6 +227,7 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
      *
      * @return the localizer
      */
+    @NotNull
     public Localizer getLocalizer() {
         return localizer;
     }
@@ -222,6 +237,7 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
      *
      * @return the config
      */
+    @NotNull
     public EisenRadarConfig getEisenRadarConfig() {
         return config;
     }
@@ -231,8 +247,29 @@ public class EisenRadarPlugin extends JavaPlugin implements Listener {
      *
      * @return the radar controller
      */
+    @NotNull
     public RadarController getRadarController() {
         return controller;
+    }
+    
+    /**
+     * Returns the death point controller.
+     *
+     * @return the death point controller
+     */
+    @NotNull
+    public DeathPointController getDeathPointController() {
+        return deathPointController;
+    }
+    
+    /**
+     * Returns the tracker factory.
+     *
+     * @return the tracker factory
+     */
+    @NotNull
+    public TrackerFactory getTrackerFactory() {
+        return trackerFactory;
     }
     
     /*

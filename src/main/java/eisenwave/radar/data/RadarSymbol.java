@@ -1,13 +1,14 @@
 package eisenwave.radar.data;
 
 import eisenwave.radar.util.ColorCodeUtil;
+import eisenwave.radar.view.RadarBar;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.regex.Pattern;
-
+/**
+ * A symbol, visible on a {@link RadarBar}
+ */
 public class RadarSymbol {
-    
-    //private static final Pattern NOT_PRECEDED_BY_COLOR_CODE = Pattern.compile("(?<!"+ ChatColor.COLOR_CHAR+").");
     
     private final String colors;
     private final char character;
@@ -19,9 +20,13 @@ public class RadarSymbol {
         this.str = colors + c;
     }
     
-    public RadarSymbol(String value) {
+    public RadarSymbol(@NotNull String value) {
         // replace all characters which are not preceded by a color char
         this(ColorCodeUtil.colorCodePrefixOf(value), ColorCodeUtil.firstCharOf(value));
+    }
+    
+    public RadarSymbol(@NotNull ChatColor color, char c) {
+        this(color.toString(), c);
     }
     
     public RadarSymbol(char value) {
@@ -33,6 +38,7 @@ public class RadarSymbol {
      *
      * @return all color codes
      */
+    @NotNull
     public String getColors() {
         return colors;
     }
@@ -50,9 +56,5 @@ public class RadarSymbol {
     public String toString() {
         return str;
     }
-    
-    // UTIL
-    
-    
     
 }

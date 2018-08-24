@@ -2,9 +2,10 @@ package eisenwave.radar.model;
 
 import eisenwave.radar.data.RadarSymbol;
 import eisenwave.radar.model.pos.RadarPosition;
-import eisenwave.radar.model.track.RadarTracker;
-import eisenwave.radar.model.track.TrackerType;
+import eisenwave.radar.model.tracker.RadarTracker;
+import eisenwave.radar.model.tracker.TrackerType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -28,8 +29,13 @@ public class RadarMap extends HashMap<String, WayPoint> {
         return maxDotRange;
     }
     
+    @Nullable
     public RadarTracker getTracker(@NotNull TrackerType type) {
         return trackers.get(type);
+    }
+    
+    public boolean hasTracker(@NotNull TrackerType type) {
+        return trackers.containsKey(type);
     }
     
     public Collection<RadarTracker> getTrackers() {
@@ -42,11 +48,11 @@ public class RadarMap extends HashMap<String, WayPoint> {
         this.maxDotRange = maxDotRange;
     }
     
-    public void addTracker(RadarTracker tracker) {
+    public void addTracker(@NotNull RadarTracker tracker) {
         trackers.put(tracker.getType(), tracker);
     }
     
-    public void removeTracker(TrackerType type) {
+    public void removeTracker(@NotNull TrackerType type) {
         trackers.remove(type);
     }
     

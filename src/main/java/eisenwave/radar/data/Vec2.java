@@ -33,6 +33,10 @@ public class Vec2 {
         return new Vec2(this.x + x, this.y + y);
     }
     
+    public Vec2 plus(Vec2 v) {
+        return plus(v.getX(), v.getY());
+    }
+    
     public Vec2 minus(double x, double y) {
         return new Vec2(this.x - x, this.y - y);
     }
